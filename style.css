@@ -138,3 +138,14 @@ nav a{
     }
     
 }
+
+.banner{
+    background-image: url(/media/imagem-banner-1.jpg);
+    background-image: url(/media/imagem-banner-1.jpg);
+    display: flex;
+    position: relative;
+    background-size: cover;
+    background-position: center;
+
+    height: 650px;
+}

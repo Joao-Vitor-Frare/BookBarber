@@ -23,3 +23,11 @@ window.addEventListener('resize', function() {
 });
 
 let ultimaPosicao = 0;
+
+const config = {
+  nomeBanner: "Seu nome",
+  descBanner: "Sua descrição",
+};
+
+document.getElementById("titulo").textContent = config.nomeBanner;
+document.getElementById("slogan").textContent = config.descBanner;
