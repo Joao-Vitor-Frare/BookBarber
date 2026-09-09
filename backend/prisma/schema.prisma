@@ -1,0 +1,60 @@
+generator client {
+  provider     = "prisma-client"
+  output       = "../generated/prisma"
+  moduleFormat = "cjs"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Cliente {
+  id           Int           @id @default(autoincrement())
+  nome         String
+  email        String        @unique
+  telefone     String
+  criadoEm     DateTime      @default(now())
+  atualizadoEm DateTime      @updatedAt
+  agendamentos Agendamento[]
+}
+
+model Barbeiro {
+  id           Int           @id @default(autoincrement())
+  nome         String
+  especialidade String?
+  ativo        Boolean       @default(true)
+  criadoEm     DateTime      @default(now())
+  atualizadoEm DateTime      @updatedAt
+  agendamentos Agendamento[]
+}
+
+model Servico {
+  id           Int           @id @default(autoincrement())
+  nome         String
+  descricao    String?
+  precoCentavos Int
+  duracaoMinutos Int
+  ativo        Boolean       @default(true)
+  criadoEm     DateTime      @default(now())
+  atualizadoEm DateTime      @updatedAt
+  agendamentos Agendamento[]
+}
+
+model Agendamento {
+  id           Int       @id @default(autoincrement())
+  dataHora     DateTime
+  status       String    @default("AGENDADO")
+  observacoes  String?
+  clienteId    Int
+  barbeiroId   Int
+  servicoId    Int
+  criadoEm     DateTime  @default(now())
+  atualizadoEm DateTime  @updatedAt
+
+  cliente      Cliente   @relation(fields: [clienteId], references: [id], onDelete: Cascade)
+  barbeiro     Barbeiro  @relation(fields: [barbeiroId], references: [id])
+  servico      Servico   @relation(fields: [servicoId], references: [id])
+
+  @@index([dataHora])
+  @@index([barbeiroId, dataHora])
+}
