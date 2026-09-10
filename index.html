@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
+    <script src="config.js" defer></script>
     <script src="script.js" defer></script>
-    <script src="config.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BookBarber</title>
 </head>
@@ -28,11 +29,17 @@
             <div class="risco"></div>
         </nav>
 
-        <button class="botao-menu" type="button">
-            <span class="linha-menu"></span>
-            <span class="linha-menu"></span>
-            <span class="linha-menu"></span>
-        </button>
+        <div class="botoes-direita">
+            <button class="config-adm" type="button">
+                <img src="icon/config.png" alt="Configurações">
+            </button>
+
+            <button class="botao-menu" type="button">
+                <span class="linha-menu"></span>
+                <span class="linha-menu"></span>
+                <span class="linha-menu"></span>
+            </button>
+        </div>
     </header>
 
     <section class="banner" id="inicio">
@@ -40,6 +47,12 @@
         <h1 class="nome-banner" id="nomeBanner"></h1>
         <h2 class="desc-banner" id="descBanner"></h2>
         </div>
+    </section>
+
+    <section id="agenda">
+        <h1 class="texto-agenda">Agende seu horário</h1>
+        <div id="calendario"></div>
+        <div id="horariosDisponiveis"></div>
     </section>
 
     <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>

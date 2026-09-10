@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Painel Admin - BookBarber</title>
+  <link rel="stylesheet" href="admin.css">
+  <script src="config.js" defer></script>
+  <script src="admin.js" defer></script>
+</head>
+<body>
+  <h1>Painel de Administração</h1>
+
+  <form id="formConfig">
+
+    <fieldset>
+      <legend>Informações gerais</legend>
+
+      <label>
+        Nome da barbearia
+        <input type="text" id="inputNome">
+      </label>
+
+      <label>
+        Descrição
+        <textarea id="inputDesc"></textarea>
+      </label>
+    </fieldset>
+
+    <fieldset>
+      <legend>Imagens do banner (2 a 5)</legend>
+      <div id="listaImagens"></div>
+      <button type="button" id="btnAddImagem">+ Adicionar imagem</button>
+    </fieldset>
+
+    <fieldset>
+      <legend>Horários de funcionamento</legend>
+      <div id="listaHorarios"></div>
+    </fieldset>
+
+    <button type="submit">Salvar configurações</button>
+  </form>
+
+  <p id="mensagemStatus"></p>
+</body>
+</html>
