@@ -1,5 +1,8 @@
 const botaoMenu = document.querySelector('.botao-menu');
 const nav = document.querySelector('nav');
+const configFinal = localStorage.getItem("configBarbearia")
+  ? JSON.parse(localStorage.getItem("configBarbearia"))
+  : config;
 
 botaoMenu.addEventListener('click', function() {
     nav.classList.toggle('menu-aberto');
@@ -34,7 +37,7 @@ window.addEventListener('resize', function() {
 
 let ultimaPosicao = 0;
 
-document.querySelectorAll('nav a[href^="#"]').forEach(link => {
+document.querySelectorAll('nav a[href^="#"], .logo a[href^="#"]').forEach(link => {
     link.addEventListener('click', function (e) {
         e.preventDefault();
 
@@ -81,18 +84,15 @@ const elNome = document.getElementById("nomeBanner");
 const elDesc = document.getElementById("descBanner");
 
 if (elNome && elDesc) {
-  elNome.textContent = config.nomeBanner;
-  elDesc.textContent = config.descBanner;
+  elNome.textContent = configFinal.nomeBanner;
+  elDesc.textContent = configFinal.descBanner;
 }
 
 const banner = document.getElementById("inicio");
 
 if (banner) {
-  const imagensBanner = config.imagensBanner.slice(0, 5); // limita a no máximo 5
-
-  if (imagensBanner.length < 2) {
-    console.warn("Adicione pelo menos 2 imagens no banner.");
-  }
+  const imagensBanner = configFinal.imagensBanner.slice(0, 5);
+  // ... resto continua igual
 
   let indiceAtual = 0;
   let intervaloAuto;
@@ -154,12 +154,6 @@ document.addEventListener('DOMContentLoaded', function() {
   if (!calendarioEl) return; // página sem calendário, não faz nada
 
   const containerHorarios = document.getElementById('horariosDisponiveis');
-
-  // pega config salva pelo admin (localStorage), senão usa o config.js padrão
-  const configFinal = localStorage.getItem("configBarbearia")
-    ? JSON.parse(localStorage.getItem("configBarbearia"))
-    : config;
-
 
   const horariosOcupados = [
     { data: '2026-09-10', hora: '09:00' },
@@ -244,4 +238,44 @@ function confirmarAgendamento(dataStr, hora) {
 
   alert('Horário reservado!');
 
+}
+
+const trilhoProdutos = document.getElementById("trilhoProdutos");
+
+if (trilhoProdutos && configFinal.produtos) {
+  configFinal.produtos.forEach(produto => {
+    const card = document.createElement("div");
+    card.classList.add("card-produto");
+
+    card.innerHTML = `
+      <img src="${produto.imagem}" alt="${produto.nome}">
+      <h3>${produto.nome}</h3>
+      <p class="preco-produto">${produto.preco}</p>
+    `;
+
+    trilhoProdutos.appendChild(card);
+  });
+
+  const setaEsq = document.querySelector(".seta-esq");
+  const setaDir = document.querySelector(".seta-dir");
+
+  function rolar(direcao) {
+    const card = trilhoProdutos.querySelector(".card-produto");
+    if (!card) return;
+
+    const passo = card.offsetWidth + 20;
+    trilhoProdutos.scrollBy({ left: passo * direcao, behavior: "smooth" });
+  }
+
+  setaEsq.addEventListener("click", () => rolar(-1));
+  setaDir.addEventListener("click", () => rolar(1));
+}
+
+const telefoneEl = document.getElementById("telefoneContato");
+
+if (telefoneEl && configFinal.contato) {
+  telefoneEl.textContent =  configFinal.contato.telefone;
+  document.getElementById("enderecoContato").textContent = configFinal.contato.endereco;
+  document.getElementById("linkInstagram").href = configFinal.contato.instagram;
+  document.getElementById("linkWhatsapp").href = configFinal.contato.whatsapp;
 }

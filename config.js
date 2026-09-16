@@ -15,4 +15,21 @@ const config = {
     sabado:   { aberto: true,  horarios: ["08:00", "09:00", "10:00"] },
     domingo:  { aberto: false, horarios: [] },
   },
+  produtos: [
+  { nome: "Pomada Modeladora", preco: "R$ 45,00", imagem: "/media/produto-1.jpg" },
+  { nome: "Óleo para Barba", preco: "R$ 38,00", imagem: "/media/produto-2.jpg" },
+  { nome: "Shampoo Anticaspa", preco: "R$ 32,00", imagem: "/media/produto-3.jpg" },
+  { nome: "Minoxidil", preco: "R$ 30,00", imagem: "/media/produto-4.jpg" },
+  { nome: "Minoxidil", preco: "R$ 30,00", imagem: "/media/produto-4.jpg" },
+  { nome: "Minoxidil", preco: "R$ 30,00", imagem: "/media/produto-4.jpg" },
+  { nome: "Minoxidil", preco: "R$ 30,00", imagem: "/media/produto-4.jpg" },
+  { nome: "Minoxidil", preco: "R$ 30,00", imagem: "/media/produto-4.jpg" },
+  { nome: "Minoxidil", preco: "R$ 30,00", imagem: "/media/produto-4.jpg" },
+  ],
+  contato: {
+  telefone: "(11) 99999-9999",
+  endereco: "Rua Miramar, 123 - Anchieta-SC",
+  instagram: "https://instagram.com/bookbarber",
+  whatsapp: "https://wa.me/5549999999999",
+  },
 };

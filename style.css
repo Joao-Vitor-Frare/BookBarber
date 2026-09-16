@@ -127,7 +127,7 @@ nav a{
     }
 
     body.redimensionando nav {
-    transition: none !important;
+        transition: none !important;
 }
 
     nav{
@@ -244,6 +244,12 @@ nav a{
     background: rgba(255, 255, 255, 1);
 }
 
+@media (max-width: 900px) {
+    .banner-dots {
+        display: none;
+    }
+}
+
 .banner::before {
     content: "";
     position: absolute;
@@ -277,6 +283,7 @@ nav a{
     position: relative;
     left: 50%;
     transform: translateX(-50%);
+    font-size: 40px;
 }
 
 #calendario{
@@ -294,7 +301,7 @@ nav a{
 
 #horariosDisponiveis h3 {
     margin-bottom: 14px;
-    font-family: "Slabo", sans-serif;
+    font-size: 30px;
 }
 
 .slot-horario {
@@ -306,7 +313,6 @@ nav a{
     border: 1px solid #555;
     border-radius: 6px;
     cursor: pointer;
-    font-family: "Slabo", sans-serif;
     transition: background 0.2s ease;
 }
 
@@ -319,4 +325,127 @@ nav a{
     color: #777;
     cursor: not-allowed;
     text-decoration: line-through;
+}
+
+#produtos{
+    margin-top: 150px;
+}
+
+.texto-produtos{
+    text-align: center;
+    font-size: 40px;
+}
+
+
+.carrossel-produtos {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    max-width: 80vw;
+    margin: 0 auto;
+}
+
+.trilho-produtos {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+}
+
+.trilho-produtos::-webkit-scrollbar {
+    display: none;
+}
+
+.card-produto {
+    flex: 0 0 240px;
+    scroll-snap-align: start;
+    background: #2c2c2c;
+    padding: 15px;
+    text-align: center;
+    font-family: "Slabo", sans-serif;
+}
+
+.card-produto img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    border-radius: 2px;
+    margin-bottom: 12px;
+    background-color: white;
+}
+
+.card-produto h3 {
+    font-size: 18px;
+    margin-bottom: 8px;
+}
+
+.preco-produto {
+    color: #4CAF50;
+    font-size: 20px;
+}
+
+.seta {
+    background: #333;
+    color: white;
+    border: 1px solid #555;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 24px;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background 0.2s ease;
+}
+
+.seta:hover {
+    background: #4CAF50;
+}
+
+@media (max-width: 900px) {
+    .card-produto {
+        flex: 0 0 180px;
+    }
+
+    .seta {
+        display: none;
+    }
+}
+
+#contato {
+    padding: 60px 20px;
+    text-align: center;
+}
+
+.texto-contato {
+    margin-bottom: 30px;
+
+}
+
+.info-contato p {
+    font-size: 18px;
+    margin-bottom: 10px;
+    font-family: "Slabo", sans-serif;
+}
+
+.redes-contato {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 25px;
+}
+
+.redes-contato a {
+    color: white;
+    text-decoration: none;
+    background: #333;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-family: "Slabo", sans-serif;
+    transition: background 0.2s ease;
+}
+
+.redes-contato a:hover {
+    background: #4CAF50;
 }
