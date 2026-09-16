@@ -1,35 +1,59 @@
-// ===== MENU MOBILE =====
-
 const botaoMenu = document.querySelector('.botao-menu');
 const nav = document.querySelector('nav');
 
-if (botaoMenu && nav) {
-  botaoMenu.addEventListener('click', function() {
+botaoMenu.addEventListener('click', function() {
     nav.classList.toggle('menu-aberto');
     botaoMenu.classList.toggle('menu-aberto');
     document.body.classList.toggle('menu-aberto');
-  });
-}
+});
+
+const linksMenu = document.querySelectorAll('nav a');
+
+linksMenu.forEach(function(link) {
+    link.addEventListener('click', function() {
+        nav.classList.remove('menu-aberto');
+        botaoMenu.classList.remove('menu-aberto');
+        document.body.classList.remove('menu-aberto');
+    });
+});
 
 window.addEventListener('load', function() {
-  document.body.classList.add('pronto');
+    document.body.classList.add('pronto');
 });
 
 let timeoutRedimensionar;
 
 window.addEventListener('resize', function() {
-  document.body.classList.add('redimensionando');
+    document.body.classList.add('redimensionando');
 
-  clearTimeout(timeoutRedimensionar);
-  timeoutRedimensionar = setTimeout(function() {
-    document.body.classList.remove('redimensionando');
-  }, 300);
+    clearTimeout(timeoutRedimensionar);
+    timeoutRedimensionar = setTimeout(function() {
+        document.body.classList.remove('redimensionando');
+    }, 300);
 });
 
 let ultimaPosicao = 0;
 
+document.querySelectorAll('nav a[href^="#"]').forEach(link => {
+    link.addEventListener('click', function (e) {
+        e.preventDefault();
 
-// ===== LINKS DE NAVEGAÇÃO SUAVE =====
+        const destino = document.querySelector(this.getAttribute('href'));
+
+        if (this.getAttribute('href') === '#inicio') {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        } else {
+            destino.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
+            });
+        }
+    });
+});
+
 
 document.querySelectorAll('nav a[href^="#"]').forEach(link => {
   link.addEventListener('click', function (e) {
@@ -52,7 +76,6 @@ document.querySelectorAll('nav a[href^="#"]').forEach(link => {
   });
 });
 
-// ===== BANNER: TÍTULO, DESCRIÇÃO E CARROSSEL =====
 
 const elNome = document.getElementById("nomeBanner");
 const elDesc = document.getElementById("descBanner");
@@ -125,7 +148,6 @@ if (banner) {
   reiniciarAutoPlay();
 }
 
-// ===== CALENDÁRIO DE AGENDAMENTO =====
 
 document.addEventListener('DOMContentLoaded', function() {
   const calendarioEl = document.getElementById('calendario');
@@ -138,7 +160,7 @@ document.addEventListener('DOMContentLoaded', function() {
     ? JSON.parse(localStorage.getItem("configBarbearia"))
     : config;
 
-  // MOCK - horários já ocupados. Depois vem do back-end.
+
   const horariosOcupados = [
     { data: '2026-09-10', hora: '09:00' },
     { data: '2026-09-10', hora: '10:00' },
@@ -218,10 +240,8 @@ function abrirModalAgendamento(dataStr, hora, dataObj) {
 }
 
 function confirmarAgendamento(dataStr, hora) {
-  // MOCK - depois vira um POST de verdade pro back-end
   console.log('Agendando:', { dataStr, hora });
 
-  alert('Horário reservado! (ainda não salva de verdade, falta o back-end)');
+  alert('Horário reservado!');
 
-  // depois: recarregar os horários do dia pra já mostrar esse como ocupado
 }

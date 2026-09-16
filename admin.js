@@ -1,4 +1,3 @@
-// ===== DADOS BASE (config atual ou salvo anteriormente) =====
 
 const diasSemana = [
   { chave: "segunda", label: "Segunda-feira" },
@@ -10,7 +9,6 @@ const diasSemana = [
   { chave: "domingo", label: "Domingo" },
 ];
 
-// pega do localStorage se já existir, senão usa o config.js padrão
 function carregarConfigAtual() {
   const salvo = localStorage.getItem("configBarbearia");
   return salvo ? JSON.parse(salvo) : config;
@@ -18,12 +16,10 @@ function carregarConfigAtual() {
 
 const configAtual = carregarConfigAtual();
 
-// ===== PREENCHER O FORMULÁRIO COM OS DADOS ATUAIS =====
 
 document.getElementById("inputNome").value = configAtual.nomeBanner || "";
 document.getElementById("inputDesc").value = configAtual.descBanner || "";
 
-// --- imagens ---
 
 const listaImagens = document.getElementById("listaImagens");
 const btnAddImagem = document.getElementById("btnAddImagem");
@@ -67,7 +63,6 @@ btnAddImagem.addEventListener("click", () => {
   criarCampoImagem();
 });
 
-// --- horários por dia ---
 
 const listaHorarios = document.getElementById("listaHorarios");
 
@@ -119,7 +114,6 @@ diasSemana.forEach(dia => {
   listaHorarios.appendChild(blocoDia);
 });
 
-// ===== SALVAR =====
 
 document.getElementById("formConfig").addEventListener("submit", function(e) {
   e.preventDefault();
@@ -153,4 +147,6 @@ document.getElementById("formConfig").addEventListener("submit", function(e) {
   localStorage.setItem("configBarbearia", JSON.stringify(novaConfig));
 
   document.getElementById("mensagemStatus").textContent = "Configurações salvas! (por enquanto só neste navegador)";
+
+  setTimeout(() => {window.location.href = "index.html"; }, 800);
 });
