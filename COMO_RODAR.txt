@@ -1,0 +1,28 @@
+BOOKBARBER - COMO RODAR
+
+1) Abra um terminal na pasta backend:
+   cd backend
+
+2) Na primeira vez (ou após substituir pelo ZIP novo):
+   cp .env.example .env
+   npm install
+   npm run setup
+
+3) Inicie o backend:
+   npm run start:dev
+
+4) Abra o frontend com o Live Server do VS Code (recomendado) a partir da pasta raiz do BookBarber.
+   O frontend usa por padrão: http://localhost:3000/api
+
+O que já está integrado:
+- Configuração da barbearia no banco
+- Horários reais/disponibilidade
+- Reserva de agendamentos
+- Cliente criado/atualizado automaticamente pelo e-mail
+- Escolha de serviço e barbeiro
+- Produtos vindos do banco
+- Admin de barbeiros, serviços, produtos e agendamentos
+
+IMPORTANTE:
+- Ainda não há autenticação/login no painel admin porque o frontend original não possui fluxo de login.
+- O arquivo backend/dev.db não deve ser enviado ao GitHub.

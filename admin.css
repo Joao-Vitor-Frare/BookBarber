@@ -148,3 +148,48 @@ button[type="button"] {
   color: #4CAF50;
   font-family: "Slabo", sans-serif;
 }
+/* Integração com o backend */
+body { max-width: 950px; }
+.topo-admin { display: flex; justify-content: space-between; gap: 20px; align-items: flex-start; }
+.voltar-site { color: white; text-decoration: none; border: 1px solid #555; padding: 8px 12px; border-radius: 5px; }
+.api-ok { color: #7fe083; }
+.api-erro, #mensagemStatus.erro { color: #ff8d8d; }
+#mensagemStatus.sucesso { color: #7fe083; }
+.secao-admin { margin-top: 45px; padding-top: 15px; border-top: 1px solid #444; }
+.secao-admin h2 { font-family: "Caacupe One", sans-serif; }
+.form-linha, .form-grid { display: grid; gap: 10px; margin-bottom: 18px; }
+.form-linha { grid-template-columns: 1fr 1fr auto; }
+.form-grid { grid-template-columns: repeat(2, 1fr); }
+.form-grid button { grid-column: 1 / -1; }
+.form-linha input, .form-grid input { margin-top: 0; }
+.form-linha button, .form-grid button, .acoes-admin button, .titulo-com-acao button { background: #333; color: white; border: 1px solid #555; border-radius: 5px; padding: 8px 12px; cursor: pointer; }
+.lista-admin { display: grid; gap: 10px; }
+.card-admin { display: flex; justify-content: space-between; align-items: center; gap: 15px; background: #292929; border: 1px solid #444; border-radius: 7px; padding: 12px 14px; }
+.card-admin strong, .card-admin span { display: block; }
+.card-admin span { margin-top: 4px; color: #c7c7c7; }
+.acoes-admin { display: flex; gap: 7px; flex-wrap: wrap; justify-content: flex-end; }
+.acoes-admin button.perigo { background: #6e2525; }
+.titulo-com-acao { display: flex; justify-content: space-between; align-items: center; }
+@media (max-width: 700px) {
+  body { padding: 18px; }
+  .topo-admin, .card-admin { flex-direction: column; align-items: stretch; }
+  .form-linha, .form-grid { grid-template-columns: 1fr; }
+  .form-grid button { grid-column: auto; }
+  .acoes-admin { justify-content: flex-start; }
+}
+
+
+/* Editor inline do painel admin */
+.card-admin-editando { align-items: stretch; }
+.editor-admin { width: 100%; display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+.editor-admin h3 { grid-column: 1 / -1; margin: 0 0 4px; font-family: "Caacupe One", sans-serif; }
+.campo-editor-admin { margin: 0; }
+.campo-editor-admin span { display: block; margin-bottom: 4px; color: #d8d8d8; }
+.campo-editor-admin input { margin-top: 0; }
+.acoes-editor-admin { grid-column: 1 / -1; display: flex; gap: 8px; }
+.acoes-editor-admin button { background: #333; color: white; border: 1px solid #555; border-radius: 5px; padding: 9px 13px; cursor: pointer; }
+.acoes-editor-admin button[type="submit"] { background: #4CAF50; border-color: #4CAF50; }
+@media (max-width: 700px) {
+  .editor-admin { grid-template-columns: 1fr; }
+  .editor-admin h3, .acoes-editor-admin { grid-column: auto; }
+}

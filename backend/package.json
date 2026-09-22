@@ -1,6 +1,6 @@
 {
   "name": "bookbarber-backend",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "build": "nest build",
@@ -9,7 +9,10 @@
     "start:prod": "node dist/main",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
-    "prisma:studio": "prisma studio"
+    "prisma:seed": "ts-node prisma/seed.ts",
+    "prisma:studio": "prisma studio",
+    "setup": "prisma generate && prisma db push && ts-node prisma/seed.ts",
+    "db:deploy": "prisma migrate deploy"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.0",
@@ -36,10 +39,5 @@
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.9.0"
-  },
-  "allowScripts": {
-    "prisma@7.10.0": true,
-    "@prisma/engines@7.10.0": true,
-    "better-sqlite3@12.11.1": true
   }
 }

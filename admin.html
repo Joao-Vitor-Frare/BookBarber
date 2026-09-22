@@ -2,28 +2,31 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Painel Admin - BookBarber</title>
   <link rel="stylesheet" href="admin.css">
   <script src="config.js" defer></script>
+  <script src="api.js" defer></script>
   <script src="admin.js" defer></script>
 </head>
 <body>
-  <h1>Painel de Administração</h1>
+  <div class="topo-admin">
+    <div>
+      <h1>Painel de Administração</h1>
+      <p id="statusApi">Conectando ao backend...</p>
+    </div>
+    <a href="index.html" class="voltar-site">← Voltar ao site</a>
+  </div>
 
   <form id="formConfig">
-
     <fieldset>
       <legend>Informações gerais</legend>
-
-      <label>
-        Nome da barbearia
-        <input type="text" id="inputNome">
-      </label>
-
-      <label>
-        Descrição
-        <textarea id="inputDesc"></textarea>
-      </label>
+      <label>Nome da barbearia <input type="text" id="inputNome" required></label>
+      <label>Descrição <textarea id="inputDesc" required></textarea></label>
+      <label>Telefone <input type="text" id="inputTelefone"></label>
+      <label>Endereço <input type="text" id="inputEndereco"></label>
+      <label>Instagram <input type="url" id="inputInstagram"></label>
+      <label>WhatsApp <input type="url" id="inputWhatsapp"></label>
     </fieldset>
 
     <fieldset>
@@ -39,7 +42,48 @@
 
     <button type="submit">Salvar configurações</button>
   </form>
-
   <p id="mensagemStatus"></p>
+
+  <section class="secao-admin">
+    <h2>Barbeiros</h2>
+    <form id="formBarbeiro" class="form-linha">
+      <input id="barbeiroNome" placeholder="Nome" required>
+      <input id="barbeiroEspecialidade" placeholder="Especialidade">
+      <button type="submit">Adicionar</button>
+    </form>
+    <div id="listaBarbeirosAdmin" class="lista-admin"></div>
+  </section>
+
+  <section class="secao-admin">
+    <h2>Serviços</h2>
+    <form id="formServico" class="form-grid">
+      <input id="servicoNome" placeholder="Nome" required>
+      <input id="servicoDescricao" placeholder="Descrição">
+      <input id="servicoPreco" type="number" step="0.01" min="0.01" placeholder="Preço (R$)" required>
+      <input id="servicoDuracao" type="number" min="1" placeholder="Duração (min)" required>
+      <button type="submit">Adicionar serviço</button>
+    </form>
+    <div id="listaServicosAdmin" class="lista-admin"></div>
+  </section>
+
+  <section class="secao-admin">
+    <h2>Produtos</h2>
+    <form id="formProduto" class="form-grid">
+      <input id="produtoNome" placeholder="Nome" required>
+      <input id="produtoPreco" type="number" step="0.01" min="0.01" placeholder="Preço (R$)" required>
+      <input id="produtoImagem" placeholder="Imagem (ex.: media/produto-1.jpg)">
+      <input id="produtoOrdem" type="number" min="0" value="0" placeholder="Ordem">
+      <button type="submit">Adicionar produto</button>
+    </form>
+    <div id="listaProdutosAdmin" class="lista-admin"></div>
+  </section>
+
+  <section class="secao-admin">
+    <div class="titulo-com-acao">
+      <h2>Agendamentos</h2>
+      <button type="button" id="btnAtualizarAgendamentos">Atualizar</button>
+    </div>
+    <div id="listaAgendamentosAdmin" class="lista-admin"></div>
+  </section>
 </body>
 </html>

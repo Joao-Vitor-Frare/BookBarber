@@ -1,281 +1,357 @@
 const botaoMenu = document.querySelector('.botao-menu');
 const nav = document.querySelector('nav');
-const configFinal = localStorage.getItem("configBarbearia")
-  ? JSON.parse(localStorage.getItem("configBarbearia"))
-  : config;
+let configFinal = config;
+let servicosAtivos = [];
+let dataSelecionada = null;
+let horarioSelecionado = null;
+let calendarioBarbearia = null;
 
-botaoMenu.addEventListener('click', function() {
+function configurarMenu() {
+  if (!botaoMenu || !nav) return;
+
+  botaoMenu.addEventListener('click', () => {
     nav.classList.toggle('menu-aberto');
     botaoMenu.classList.toggle('menu-aberto');
     document.body.classList.toggle('menu-aberto');
-});
-
-const linksMenu = document.querySelectorAll('nav a');
-
-linksMenu.forEach(function(link) {
-    link.addEventListener('click', function() {
-        nav.classList.remove('menu-aberto');
-        botaoMenu.classList.remove('menu-aberto');
-        document.body.classList.remove('menu-aberto');
-    });
-});
-
-window.addEventListener('load', function() {
-    document.body.classList.add('pronto');
-});
-
-let timeoutRedimensionar;
-
-window.addEventListener('resize', function() {
-    document.body.classList.add('redimensionando');
-
-    clearTimeout(timeoutRedimensionar);
-    timeoutRedimensionar = setTimeout(function() {
-        document.body.classList.remove('redimensionando');
-    }, 300);
-});
-
-let ultimaPosicao = 0;
-
-document.querySelectorAll('nav a[href^="#"], .logo a[href^="#"]').forEach(link => {
-    link.addEventListener('click', function (e) {
-        e.preventDefault();
-
-        const destino = document.querySelector(this.getAttribute('href'));
-
-        if (this.getAttribute('href') === '#inicio') {
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
-        } else {
-            destino.scrollIntoView({
-                behavior: 'smooth',
-                block: 'center'
-            });
-        }
-    });
-});
-
-
-document.querySelectorAll('nav a[href^="#"]').forEach(link => {
-  link.addEventListener('click', function (e) {
-    e.preventDefault();
-
-    const destino = document.querySelector(this.getAttribute('href'));
-    if (!destino && this.getAttribute('href') !== '#inicio') return;
-
-    if (this.getAttribute('href') === '#inicio') {
-      window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-      });
-    } else {
-      destino.scrollIntoView({
-        behavior: 'smooth',
-        block: 'center'
-      });
-    }
   });
-});
 
+  document.querySelectorAll('nav a').forEach(link => {
+    link.addEventListener('click', () => {
+      nav.classList.remove('menu-aberto');
+      botaoMenu.classList.remove('menu-aberto');
+      document.body.classList.remove('menu-aberto');
+    });
+  });
 
-const elNome = document.getElementById("nomeBanner");
-const elDesc = document.getElementById("descBanner");
+  document.querySelectorAll('nav a[href^="#"], .logo a[href^="#"]').forEach(link => {
+    link.addEventListener('click', function (e) {
+      e.preventDefault();
+      const alvo = this.getAttribute('href');
+      if (alvo === '#inicio') {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+      }
+      document.querySelector(alvo)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+  });
 
-if (elNome && elDesc) {
-  elNome.textContent = configFinal.nomeBanner;
-  elDesc.textContent = configFinal.descBanner;
+  let timeoutRedimensionar;
+  window.addEventListener('resize', () => {
+    document.body.classList.add('redimensionando');
+    clearTimeout(timeoutRedimensionar);
+    timeoutRedimensionar = setTimeout(() => document.body.classList.remove('redimensionando'), 300);
+  });
 }
 
-const banner = document.getElementById("inicio");
+async function carregarConfiguracao() {
+  try {
+    configFinal = await BookBarberAPI.getConfig();
+  } catch (erro) {
+    console.warn('Backend indisponível; usando config.js como fallback.', erro);
+    configFinal = config;
+  }
+}
 
-if (banner) {
-  const imagensBanner = configFinal.imagensBanner.slice(0, 5);
-  // ... resto continua igual
+function renderizarBanner() {
+  const elNome = document.getElementById('nomeBanner');
+  const elDesc = document.getElementById('descBanner');
+  const banner = document.getElementById('inicio');
+  if (!banner) return;
+
+  if (elNome) elNome.textContent = configFinal.nomeBanner || 'BookBarber';
+  if (elDesc) elDesc.textContent = configFinal.descBanner || '';
+
+  banner.querySelectorAll('.bg-slide, .banner-dots').forEach(el => el.remove());
+  const imagens = (configFinal.imagensBanner || []).slice(0, 5);
+  if (!imagens.length) return;
 
   let indiceAtual = 0;
   let intervaloAuto;
 
-  imagensBanner.forEach((img, i) => {
-    const slide = document.createElement("div");
-    slide.classList.add("bg-slide");
-    slide.style.backgroundImage = `url(${img})`;
-    if (i === 0) slide.classList.add("ativo");
+  imagens.forEach((img, i) => {
+    const slide = document.createElement('div');
+    slide.className = `bg-slide${i === 0 ? ' ativo' : ''}`;
+    slide.style.backgroundImage = `url("${img}")`;
     banner.appendChild(slide);
   });
 
-  const dotsContainer = document.createElement("div");
-  dotsContainer.classList.add("banner-dots");
+  const dotsContainer = document.createElement('div');
+  dotsContainer.className = 'banner-dots';
   banner.appendChild(dotsContainer);
 
-  imagensBanner.forEach((img, i) => {
-    const dot = document.createElement("span");
-    dot.classList.add("dot");
-    if (i === 0) dot.classList.add("ativo");
-    dot.addEventListener("click", () => irParaSlide(i));
+  imagens.forEach((_, i) => {
+    const dot = document.createElement('span');
+    dot.className = `dot${i === 0 ? ' ativo' : ''}`;
+    dot.addEventListener('click', () => irParaSlide(i));
     dotsContainer.appendChild(dot);
   });
 
-  const slides = document.querySelectorAll(".bg-slide");
-  const dots = document.querySelectorAll(".dot");
+  const slides = banner.querySelectorAll('.bg-slide');
+  const dots = dotsContainer.querySelectorAll('.dot');
 
   function mostrarSlide(indice) {
-    slides[indiceAtual].classList.remove("ativo");
-    dots[indiceAtual].classList.remove("ativo");
-
+    slides[indiceAtual]?.classList.remove('ativo');
+    dots[indiceAtual]?.classList.remove('ativo');
     indiceAtual = indice;
-
-    slides[indiceAtual].classList.add("ativo");
-    dots[indiceAtual].classList.add("ativo");
-  }
-
-  function trocarSlideAuto() {
-    const proximo = (indiceAtual + 1) % slides.length;
-    mostrarSlide(proximo);
+    slides[indiceAtual]?.classList.add('ativo');
+    dots[indiceAtual]?.classList.add('ativo');
   }
 
   function irParaSlide(indice) {
     mostrarSlide(indice);
-    reiniciarAutoPlay();
-  }
-
-  function reiniciarAutoPlay() {
     clearInterval(intervaloAuto);
-    intervaloAuto = setInterval(trocarSlideAuto, 6000);
+    intervaloAuto = setInterval(() => mostrarSlide((indiceAtual + 1) % slides.length), 6000);
   }
 
-  reiniciarAutoPlay();
+  if (slides.length > 1) {
+    intervaloAuto = setInterval(() => mostrarSlide((indiceAtual + 1) % slides.length), 6000);
+  }
 }
 
+function renderizarContato() {
+  const contato = configFinal.contato || {};
+  const telefone = document.getElementById('telefoneContato');
+  const endereco = document.getElementById('enderecoContato');
+  const instagram = document.getElementById('linkInstagram');
+  const whatsapp = document.getElementById('linkWhatsapp');
 
-document.addEventListener('DOMContentLoaded', function() {
+  if (telefone) telefone.textContent = contato.telefone || '';
+  if (endereco) endereco.textContent = contato.endereco || '';
+  if (instagram) instagram.href = contato.instagram || '#';
+  if (whatsapp) whatsapp.href = contato.whatsapp || '#';
+}
+
+function formatarPrecoCentavos(valor) {
+  return (Number(valor || 0) / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+}
+
+async function renderizarProdutos() {
+  const trilho = document.getElementById('trilhoProdutos');
+  if (!trilho) return;
+  trilho.innerHTML = '<p>Carregando produtos...</p>';
+
+  let produtos;
+  try {
+    produtos = await BookBarberAPI.getProdutos();
+  } catch (erro) {
+    console.warn('Não foi possível carregar produtos da API.', erro);
+    produtos = (configFinal.produtos || []).map((p, index) => ({
+      id: `fallback-${index}`,
+      nome: p.nome,
+      imagem: p.imagem,
+      precoFormatado: p.preco,
+    }));
+  }
+
+  trilho.innerHTML = '';
+  if (!produtos.length) {
+    trilho.innerHTML = '<p>Nenhum produto cadastrado.</p>';
+    return;
+  }
+
+  produtos.forEach(produto => {
+    const card = document.createElement('div');
+    card.className = 'card-produto';
+    const preco = produto.precoFormatado || formatarPrecoCentavos(produto.precoCentavos);
+    card.innerHTML = `
+      <img src="${produto.imagem || 'media/logo-bookbarber.png'}" alt="${produto.nome}">
+      <h3>${produto.nome}</h3>
+      <p class="preco-produto">${preco}</p>
+    `;
+    trilho.appendChild(card);
+  });
+
+  document.querySelector('.seta-esq')?.addEventListener('click', () => rolarProdutos(-1));
+  document.querySelector('.seta-dir')?.addEventListener('click', () => rolarProdutos(1));
+}
+
+function rolarProdutos(direcao) {
+  const trilho = document.getElementById('trilhoProdutos');
+  const card = trilho?.querySelector('.card-produto');
+  if (!trilho || !card) return;
+  trilho.scrollBy({ left: (card.offsetWidth + 20) * direcao, behavior: 'smooth' });
+}
+
+async function carregarServicos() {
+  try {
+    servicosAtivos = await BookBarberAPI.getServicos();
+  } catch (erro) {
+    console.error('Não foi possível carregar os serviços.', erro);
+    servicosAtivos = [];
+  }
+}
+
+function dataHojeISO() {
+  const agora = new Date();
+  const ano = agora.getFullYear();
+  const mes = String(agora.getMonth() + 1).padStart(2, '0');
+  const dia = String(agora.getDate()).padStart(2, '0');
+  return `${ano}-${mes}-${dia}`;
+}
+
+function iniciarCalendario() {
   const calendarioEl = document.getElementById('calendario');
-  if (!calendarioEl) return; // página sem calendário, não faz nada
+  if (!calendarioEl || typeof FullCalendar === 'undefined') return;
 
-  const containerHorarios = document.getElementById('horariosDisponiveis');
-
-  const horariosOcupados = [
-    { data: '2026-09-10', hora: '09:00' },
-    { data: '2026-09-10', hora: '10:00' },
-    { data: '2026-09-11', hora: '14:00' },
-  ];
-
-  const diasSemanaMap = ['domingo', 'segunda', 'terca', 'quarta', 'quinta', 'sexta', 'sabado'];
-
-  const calendar = new FullCalendar.Calendar(calendarioEl, {
+  calendarioBarbearia = new FullCalendar.Calendar(calendarioEl, {
     locale: 'pt-br',
     initialView: 'dayGridMonth',
     height: 600,
-    headerToolbar: {
-      left: 'prev,next today',
-      center: 'title',
-      right: ''
-    },
-    dateClick: function(info) {
-      mostrarHorariosDoDia(info.dateStr);
-    }
+    validRange: { start: dataHojeISO() },
+    headerToolbar: { left: 'prev,next today', center: 'title', right: '' },
+    dateClick: (info) => mostrarHorariosDoDia(info.dateStr),
   });
 
-  calendar.render();
+  calendarioBarbearia.render();
+  window.calendarioBarbearia = calendarioBarbearia;
+}
 
-  function mostrarHorariosDoDia(dataStr) {
-    const dataObj = new Date(dataStr + 'T00:00:00');
-    const chaveDia = diasSemanaMap[dataObj.getDay()];
-    const dadosDia = configFinal.horariosSemana && configFinal.horariosSemana[chaveDia];
+async function mostrarHorariosDoDia(dataStr) {
+  const container = document.getElementById('horariosDisponiveis');
+  if (!container) return;
 
-    containerHorarios.innerHTML = '';
+  const dataObj = new Date(`${dataStr}T12:00:00`);
+  container.innerHTML = `<h3>Horários para ${dataObj.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' })}</h3><p>Consultando disponibilidade...</p>`;
 
-    const titulo = document.createElement('h3');
-    titulo.textContent = 'Horários para ' + dataObj.toLocaleDateString('pt-BR', {
-      weekday: 'long', day: '2-digit', month: 'long'
-    });
-    containerHorarios.appendChild(titulo);
+  try {
+    const disponibilidade = await BookBarberAPI.getDisponibilidade(dataStr);
+    container.innerHTML = `<h3>Horários para ${dataObj.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' })}</h3>`;
 
-    if (!dadosDia || !dadosDia.aberto || dadosDia.horarios.length === 0) {
-      const aviso = document.createElement('p');
-      aviso.textContent = 'Fechado nesse dia.';
-      containerHorarios.appendChild(aviso);
+    if (!disponibilidade.aberto || !disponibilidade.horarios.length) {
+      container.insertAdjacentHTML('beforeend', '<p>Fechado nesse dia.</p>');
       return;
     }
 
-    dadosDia.horarios.forEach(hora => {
-      const ocupado = horariosOcupados.some(h => h.data === dataStr && h.hora === hora);
-
+    disponibilidade.horarios.forEach(slot => {
       const btn = document.createElement('button');
       btn.type = 'button';
-      btn.textContent = hora;
-      btn.classList.add('slot-horario');
+      btn.textContent = slot.hora;
+      btn.className = `slot-horario${slot.disponivel ? '' : ' ocupado'}`;
+      btn.disabled = !slot.disponivel;
 
-      if (ocupado) {
-        btn.classList.add('ocupado');
-        btn.disabled = true;
-      } else {
-        btn.addEventListener('click', () => abrirModalAgendamento(dataStr, hora, dataObj));
+      if (slot.disponivel) {
+        btn.addEventListener('click', () => abrirModalAgendamento(dataStr, slot, dataObj));
       }
 
-      containerHorarios.appendChild(btn);
+      container.appendChild(btn);
     });
+  } catch (erro) {
+    container.insertAdjacentHTML('beforeend', `<p class="erro-api">Não foi possível consultar a agenda: ${erro.message}</p>`);
   }
+}
 
-  window.calendarioBarbearia = calendar;
-});
+function abrirModalAgendamento(dataStr, slot, dataObj) {
+  dataSelecionada = dataStr;
+  horarioSelecionado = slot;
 
-function abrirModalAgendamento(dataStr, hora, dataObj) {
-  const dataFormatada = dataObj.toLocaleDateString('pt-BR', {
-    weekday: 'long', day: '2-digit', month: 'long'
+  const modal = document.getElementById('modalAgendamento');
+  const resumo = document.getElementById('resumoAgendamento');
+  const selectServico = document.getElementById('agendamentoServico');
+  const selectBarbeiro = document.getElementById('agendamentoBarbeiro');
+  const mensagem = document.getElementById('mensagemAgendamento');
+
+  resumo.textContent = `${dataObj.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' })}, às ${slot.hora}`;
+  mensagem.textContent = '';
+  mensagem.className = 'mensagem-agendamento';
+
+  selectServico.innerHTML = '<option value="">Selecione um serviço</option>';
+  servicosAtivos.forEach(servico => {
+    const option = document.createElement('option');
+    option.value = servico.id;
+    option.textContent = `${servico.nome} — ${formatarPrecoCentavos(servico.precoCentavos)}`;
+    selectServico.appendChild(option);
   });
 
-  const confirmar = confirm(`Confirmar agendamento?\n\n${dataFormatada}\nÀs ${hora}`);
-
-  if (confirmar) {
-    confirmarAgendamento(dataStr, hora);
-  }
-}
-
-function confirmarAgendamento(dataStr, hora) {
-  console.log('Agendando:', { dataStr, hora });
-
-  alert('Horário reservado!');
-
-}
-
-const trilhoProdutos = document.getElementById("trilhoProdutos");
-
-if (trilhoProdutos && configFinal.produtos) {
-  configFinal.produtos.forEach(produto => {
-    const card = document.createElement("div");
-    card.classList.add("card-produto");
-
-    card.innerHTML = `
-      <img src="${produto.imagem}" alt="${produto.nome}">
-      <h3>${produto.nome}</h3>
-      <p class="preco-produto">${produto.preco}</p>
-    `;
-
-    trilhoProdutos.appendChild(card);
+  selectBarbeiro.innerHTML = '<option value="">Qualquer barbeiro disponível</option>';
+  (slot.barbeirosDisponiveis || []).forEach(barbeiro => {
+    const option = document.createElement('option');
+    option.value = barbeiro.id;
+    option.textContent = barbeiro.nome;
+    selectBarbeiro.appendChild(option);
   });
 
-  const setaEsq = document.querySelector(".seta-esq");
-  const setaDir = document.querySelector(".seta-dir");
+  modal.classList.add('aberto');
+  modal.setAttribute('aria-hidden', 'false');
+  document.getElementById('agendamentoNome')?.focus();
+}
 
-  function rolar(direcao) {
-    const card = trilhoProdutos.querySelector(".card-produto");
-    if (!card) return;
+function fecharModalAgendamento() {
+  const modal = document.getElementById('modalAgendamento');
+  modal?.classList.remove('aberto');
+  modal?.setAttribute('aria-hidden', 'true');
+}
 
-    const passo = card.offsetWidth + 20;
-    trilhoProdutos.scrollBy({ left: passo * direcao, behavior: "smooth" });
+function configurarModal() {
+  const modal = document.getElementById('modalAgendamento');
+  document.getElementById('fecharModalAgendamento')?.addEventListener('click', fecharModalAgendamento);
+  modal?.addEventListener('click', e => {
+    if (e.target === modal) fecharModalAgendamento();
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') fecharModalAgendamento();
+  });
+
+  document.getElementById('formAgendamento')?.addEventListener('submit', confirmarAgendamento);
+}
+
+async function confirmarAgendamento(event) {
+  event.preventDefault();
+  if (!dataSelecionada || !horarioSelecionado) return;
+
+  // currentTarget pode virar null depois de um await. Guardamos a referência
+  // ao formulário antes da chamada assíncrona para poder resetá-lo depois.
+  const formulario = event.currentTarget;
+  const mensagem = document.getElementById('mensagemAgendamento');
+  const botao = formulario.querySelector('button[type="submit"]');
+  const servicoId = Number(document.getElementById('agendamentoServico').value);
+  const barbeiroValor = document.getElementById('agendamentoBarbeiro').value;
+
+  if (!servicoId) {
+    mensagem.textContent = 'Selecione um serviço.';
+    mensagem.className = 'mensagem-agendamento erro';
+    return;
   }
 
-  setaEsq.addEventListener("click", () => rolar(-1));
-  setaDir.addEventListener("click", () => rolar(1));
+  const payload = {
+    nomeCliente: document.getElementById('agendamentoNome').value.trim(),
+    email: document.getElementById('agendamentoEmail').value.trim(),
+    telefone: document.getElementById('agendamentoTelefone').value.trim(),
+    data: dataSelecionada,
+    hora: horarioSelecionado.hora,
+    servicoId,
+    observacoes: document.getElementById('agendamentoObservacoes').value.trim() || undefined,
+  };
+  if (barbeiroValor) payload.barbeiroId = Number(barbeiroValor);
+
+  botao.disabled = true;
+  botao.textContent = 'Reservando...';
+  mensagem.textContent = '';
+
+  try {
+    const agendamento = await BookBarberAPI.reservar(payload);
+    mensagem.textContent = `Horário reservado com sucesso com ${agendamento.barbeiro.nome}!`;
+    mensagem.className = 'mensagem-agendamento sucesso';
+    formulario.reset();
+    setTimeout(() => fecharModalAgendamento(), 1100);
+    await mostrarHorariosDoDia(dataSelecionada);
+  } catch (erro) {
+    mensagem.textContent = erro.message;
+    mensagem.className = 'mensagem-agendamento erro';
+  } finally {
+    botao.disabled = false;
+    botao.textContent = 'Reservar horário';
+  }
 }
 
-const telefoneEl = document.getElementById("telefoneContato");
-
-if (telefoneEl && configFinal.contato) {
-  telefoneEl.textContent =  configFinal.contato.telefone;
-  document.getElementById("enderecoContato").textContent = configFinal.contato.endereco;
-  document.getElementById("linkInstagram").href = configFinal.contato.instagram;
-  document.getElementById("linkWhatsapp").href = configFinal.contato.whatsapp;
+async function iniciarSite() {
+  configurarMenu();
+  configurarModal();
+  await carregarConfiguracao();
+  renderizarBanner();
+  renderizarContato();
+  await Promise.all([carregarServicos(), renderizarProdutos()]);
+  iniciarCalendario();
+  document.body.classList.add('pronto');
 }
+
+document.addEventListener('DOMContentLoaded', iniciarSite);

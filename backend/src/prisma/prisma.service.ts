@@ -8,7 +8,6 @@ export class PrismaService extends PrismaClient implements OnModuleDestroy {
     const adapter = new PrismaBetterSqlite3({
       url: process.env.DATABASE_URL || 'file:./dev.db',
     });
-
     super({ adapter });
   }
 

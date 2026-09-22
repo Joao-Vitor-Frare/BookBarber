@@ -4,3 +4,5 @@ backend/.env
 backend/dev.db
 backend/dev.db-journal
 backend/generated/
+.vscode/
+.DS_Store

@@ -5,6 +5,7 @@
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
     <script src="config.js" defer></script>
+    <script src="api.js" defer></script>
     <script src="script.js" defer></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BookBarber</title>
@@ -13,12 +14,12 @@
     <header class="barranav">
         <div class="logo">
             <a href="#inicio">
-            <img src="/media/logo-bookbarber.png" alt="Logo BookBarber">
+            <img src="media/logo-bookbarber.png" alt="Logo BookBarber">
             </a>
         </div>
         
         <nav>
-            <img class="logo-menu-aberto" src="/media/logo-bookbarber.png" alt="Logo BookBarber">
+            <img class="logo-menu-aberto" src="media/logo-bookbarber.png" alt="Logo BookBarber">
             <a href="#inicio">Início</a>
             <div class="risco"></div>
             <a href="#agenda">Agenda</a>
@@ -34,7 +35,7 @@
                 <img src="icon/config.png" alt="Configurações">
             </a>
 
-            <button class="botao-menu" type="button">
+            <button class="botao-menu" type="button" aria-label="Abrir menu">
                 <span class="linha-menu"></span>
                 <span class="linha-menu"></span>
                 <span class="linha-menu"></span>
@@ -51,6 +52,7 @@
 
     <section id="agenda">
         <h1 class="texto-agenda">Agende seu horário</h1>
+        <p class="subtexto-agenda">Escolha um dia no calendário e depois selecione um horário disponível.</p>
         <div id="calendario"></div>
         <div id="horariosDisponiveis"></div>
     </section>
@@ -69,19 +71,60 @@
     <h1 class="texto-contato">Contato</h1>
         <div class="info-contato">
             <p class="linha-contato">
-                <img src="icon/telefone.png" alt="Telefone">
+                <span>Telefone:</span>
                 <span id="telefoneContato"></span>
             </p>
 
             <p class="linha-contato">
-                <img src="icon/local.png" alt="Endereço">
+                <span>Endereço:</span>
                 <span id="enderecoContato"></span>
             </p>
 
             <div class="redes-contato">
-                <a id="linkInstagram" href="#" target="_blank">Instagram</a>
-                <a id="linkWhatsapp" href="#" target="_blank">WhatsApp</a>
+                <a id="linkInstagram" href="#" target="_blank" rel="noopener">Instagram</a>
+                <a id="linkWhatsapp" href="#" target="_blank" rel="noopener">WhatsApp</a>
             </div>
         </div>
     </section>
+
+    <div id="modalAgendamento" class="modal-agendamento" aria-hidden="true">
+      <div class="modal-conteudo" role="dialog" aria-modal="true" aria-labelledby="tituloModalAgendamento">
+        <button type="button" id="fecharModalAgendamento" class="modal-fechar" aria-label="Fechar">×</button>
+        <h2 id="tituloModalAgendamento">Confirmar agendamento</h2>
+        <p id="resumoAgendamento" class="resumo-agendamento"></p>
+
+        <form id="formAgendamento">
+          <label>
+            Seu nome
+            <input id="agendamentoNome" type="text" autocomplete="name" required>
+          </label>
+          <label>
+            E-mail
+            <input id="agendamentoEmail" type="email" autocomplete="email" required>
+          </label>
+          <label>
+            Telefone
+            <input id="agendamentoTelefone" type="tel" autocomplete="tel" required>
+          </label>
+          <label>
+            Serviço
+            <select id="agendamentoServico" required></select>
+          </label>
+          <label>
+            Barbeiro
+            <select id="agendamentoBarbeiro">
+              <option value="">Qualquer barbeiro disponível</option>
+            </select>
+          </label>
+          <label>
+            Observações (opcional)
+            <textarea id="agendamentoObservacoes" rows="3"></textarea>
+          </label>
+
+          <button type="submit" class="botao-confirmar-agendamento">Reservar horário</button>
+          <p id="mensagemAgendamento" class="mensagem-agendamento"></p>
+        </form>
+      </div>
+    </div>
 </body>
+</html>

@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateClienteDto } from './dto/create-cliente.dto';
 import { UpdateClienteDto } from './dto/update-cliente.dto';
@@ -7,8 +7,13 @@ import { UpdateClienteDto } from './dto/update-cliente.dto';
 export class ClientesService {
   constructor(private readonly prisma: PrismaService) {}
 
-  create(data: CreateClienteDto) {
-    return this.prisma.cliente.create({ data });
+  async create(data: CreateClienteDto) {
+    try {
+      return await this.prisma.cliente.create({ data });
+    } catch (erro: any) {
+      if (erro?.code === 'P2002') throw new ConflictException('Já existe um cliente com esse email');
+      throw erro;
+    }
   }
 
   findAll() {
@@ -23,7 +28,12 @@ export class ClientesService {
 
   async update(id: number, data: UpdateClienteDto) {
     await this.findOne(id);
-    return this.prisma.cliente.update({ where: { id }, data });
+    try {
+      return await this.prisma.cliente.update({ where: { id }, data });
+    } catch (erro: any) {
+      if (erro?.code === 'P2002') throw new ConflictException('Já existe um cliente com esse email');
+      throw erro;
+    }
   }
 
   async remove(id: number) {

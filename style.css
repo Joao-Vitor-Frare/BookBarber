@@ -449,3 +449,116 @@ nav a{
 .redes-contato a:hover {
     background: #4CAF50;
 }
+/* Integração com o backend */
+.subtexto-agenda {
+    text-align: center;
+    font-family: "Slabo", sans-serif;
+    font-size: 18px;
+    color: #cfcfcf;
+    margin-top: -20px;
+}
+
+.erro-api {
+    color: #ff8d8d;
+}
+
+.modal-agendamento {
+    position: fixed;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(0, 0, 0, .78);
+    z-index: 3000;
+}
+
+.modal-agendamento.aberto {
+    display: flex;
+}
+
+.modal-conteudo {
+    position: relative;
+    width: min(520px, 100%);
+    max-height: 90vh;
+    overflow-y: auto;
+    background: #242424;
+    border: 1px solid #555;
+    border-radius: 10px;
+    padding: 28px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, .45);
+    font-family: "Slabo", sans-serif;
+}
+
+.modal-conteudo h2 {
+    margin-top: 0;
+    font-family: "Caacupe One", sans-serif;
+}
+
+.modal-fechar {
+    position: absolute;
+    right: 14px;
+    top: 10px;
+    border: 0;
+    background: transparent;
+    color: white;
+    font-size: 30px;
+    cursor: pointer;
+}
+
+.resumo-agendamento {
+    color: #9fdf9f;
+    font-size: 18px;
+}
+
+.modal-conteudo label {
+    display: block;
+    margin: 13px 0;
+}
+
+.modal-conteudo input,
+.modal-conteudo select,
+.modal-conteudo textarea {
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+    margin-top: 6px;
+    padding: 10px;
+    border: 1px solid #555;
+    border-radius: 5px;
+    background: #191919;
+    color: white;
+    font: inherit;
+}
+
+.botao-confirmar-agendamento {
+    width: 100%;
+    margin-top: 10px;
+    padding: 12px;
+    border: 0;
+    border-radius: 6px;
+    background: #4CAF50;
+    color: white;
+    cursor: pointer;
+    font-family: "Caacupe One", sans-serif;
+    font-size: 16px;
+}
+
+.botao-confirmar-agendamento:disabled {
+    opacity: .6;
+    cursor: wait;
+}
+
+.mensagem-agendamento {
+    min-height: 20px;
+    margin: 12px 0 0;
+}
+
+.mensagem-agendamento.sucesso { color: #7fe083; }
+.mensagem-agendamento.erro { color: #ff8d8d; }
+
+@media (max-width: 900px) {
+    #calendario {
+        max-width: 95vw;
+    }
+}

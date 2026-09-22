@@ -1,0 +1,40 @@
+@base = http://localhost:3000/api
+
+### Configuração usada pelo front
+GET {{base}}/configuracao
+
+### Produtos
+GET {{base}}/produtos
+
+### Serviços
+GET {{base}}/servicos
+
+### Barbeiros
+GET {{base}}/barbeiros
+
+### Disponibilidade de um dia
+GET {{base}}/agendamentos/disponibilidade?data=2026-09-25
+
+### Reserva pública - cria/atualiza o cliente automaticamente
+POST {{base}}/agendamentos/reservar
+Content-Type: application/json
+
+{
+  "nomeCliente": "João Vitor",
+  "email": "joaovitor@email.com",
+  "telefone": "49999999999",
+  "data": "2026-09-25",
+  "hora": "14:00",
+  "servicoId": 1
+}
+
+### Todos os agendamentos
+GET {{base}}/agendamentos
+
+### Cancelar um agendamento
+PATCH {{base}}/agendamentos/1
+Content-Type: application/json
+
+{
+  "status": "CANCELADO"
+}
