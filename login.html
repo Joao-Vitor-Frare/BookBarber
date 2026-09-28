@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - BookBarber</title>
+    <link rel="stylesheet" href="login.css">
+    <script src="config.js" defer></script>
+    <script src="login.js" defer></script>
+</head>
+<body>
+    <main class="login-pagina">
+        <a href="index.html" class="login-nome" id="nomeBarbearia"></a>
+
+        <div class="login-card">
+
+            <form id="formLogin">
+                <h2>Entrar</h2>
+
+                <label>
+                    Email
+                    <input type="email" id="loginEmail" required>
+                </label>
+
+                <label>
+                    Senha
+                    <input type="password" id="loginSenha" required>
+                </label>
+
+                <button type="submit">Entrar</button>
+
+                <p class="login-troca">
+                    Não tem conta? <a href="#" id="irCadastro">Criar conta</a>
+                </p>
+            </form>
+
+            <form id="formCadastro" hidden>
+                <h2>Criar conta</h2>
+
+                <label>
+                    Nome
+                    <input type="text" id="cadNome" required>
+                </label>
+
+                <label>
+                    Email
+                    <input type="email" id="cadEmail" required>
+                </label>
+
+                <label>
+                    Senha
+                    <input type="password" id="cadSenha" minlength="6" required>
+                </label>
+
+                <label>
+                    Confirmar senha
+                    <input type="password" id="cadConfirmar" minlength="6" required>
+                </label>
+
+                <button type="submit">Criar conta</button>
+
+                <p class="login-troca">
+                    Já tem conta? <a href="#" id="irLogin">Entrar</a>
+                </p>
+            </form>
+
+            <p id="mensagemLogin" class="login-mensagem"></p>
+        </div>
+    </main>
+</body>
+</html>

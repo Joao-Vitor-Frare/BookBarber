@@ -1,0 +1,117 @@
+@font-face {
+    font-family: "Caacupe One";
+    src: url("fonts/CaacupeOne-Regular.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "Slabo";
+    src: url("fonts/Slabo13px-Regular.ttf") format("truetype");
+}
+
+body {
+    background-color: rgb(34, 34, 34);
+    color: white;
+    font-family: "Slabo", sans-serif;
+    margin: 0;
+}
+
+.login-pagina {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 60px 20px;
+    box-sizing: border-box;
+}
+
+.login-nome {
+    font-family: "Caacupe One", sans-serif;
+    font-size: clamp(2.5rem, 8vw, 4.5rem);
+    color: white;
+    text-decoration: none;
+    margin-bottom: 40px;
+    text-align: center;
+}
+
+.login-card {
+    width: 100%;
+    max-width: 380px;
+    background: #2c2c2c;
+    border: 1px solid #444;
+    border-radius: 10px;
+    padding: 30px;
+    box-sizing: border-box;
+}
+
+.login-card form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.login-card form[hidden] {
+    display: none;
+}
+
+.login-card h2 {
+    font-family: "Caacupe One", sans-serif;
+    margin: 0 0 5px;
+    text-align: center;
+}
+
+.login-card label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.login-card input {
+    padding: 10px;
+    border-radius: 4px;
+    border: 1px solid #555;
+    background: #222;
+    color: white;
+    font-family: "Slabo", sans-serif;
+    font-size: 16px;
+}
+
+.login-card input:focus {
+    outline: none;
+    border-color: #888;
+}
+
+.login-card button[type="submit"] {
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 12px;
+    font-family: "Caacupe One", sans-serif;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 5px;
+}
+
+.login-troca {
+    text-align: center;
+    margin: 5px 0 0;
+    font-size: 15px;
+}
+
+.login-troca a {
+    color: #4CAF50;
+}
+
+.login-mensagem {
+    text-align: center;
+    margin: 15px 0 0;
+    min-height: 1em;
+}
+
+.login-mensagem.erro {
+    color: #e57373;
+}
+
+.login-mensagem.sucesso {
+    color: #4CAF50;
+}

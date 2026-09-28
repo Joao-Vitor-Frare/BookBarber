@@ -449,6 +449,15 @@ nav a{
 .redes-contato a:hover {
     background: #4CAF50;
 }
+
+.icon-telefone{
+    height: 15px;
+}
+
+.icon-endereco{
+    height: 15px;
+}
+
 /* Integração com o backend */
 .subtexto-agenda {
     text-align: center;
