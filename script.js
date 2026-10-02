@@ -6,6 +6,42 @@ let dataSelecionada = null;
 let horarioSelecionado = null;
 let calendarioBarbearia = null;
 
+
+async function configurarSessao() {
+  const linkLogin = document.getElementById('linkLogin');
+  const linkAdmin = document.getElementById('linkAdmin');
+
+  if (linkAdmin) linkAdmin.hidden = true;
+  if (!BookBarberAPI.estaLogado()) {
+    if (linkLogin) {
+      linkLogin.textContent = 'Entrar';
+      linkLogin.href = 'login.html';
+    }
+    return;
+  }
+
+  try {
+    const usuario = await BookBarberAPI.me();
+    if (linkLogin) {
+      linkLogin.textContent = 'Sair';
+      linkLogin.title = `Conectado como ${usuario.nome}`;
+      linkLogin.href = '#';
+      linkLogin.addEventListener('click', e => {
+        e.preventDefault();
+        BookBarberAPI.logout();
+        window.location.reload();
+      }, { once: true });
+    }
+    if (linkAdmin) linkAdmin.hidden = usuario.perfil !== 'ADMIN';
+  } catch {
+    BookBarberAPI.logout();
+    if (linkLogin) {
+      linkLogin.textContent = 'Entrar';
+      linkLogin.href = 'login.html';
+    }
+  }
+}
+
 function configurarMenu() {
   if (!botaoMenu || !nav) return;
 
@@ -270,6 +306,14 @@ function abrirModalAgendamento(dataStr, slot, dataObj) {
     selectBarbeiro.appendChild(option);
   });
 
+  const usuario = BookBarberAPI.getUsuario();
+  if (usuario) {
+    const inputNome = document.getElementById('agendamentoNome');
+    const inputEmail = document.getElementById('agendamentoEmail');
+    if (inputNome && !inputNome.value) inputNome.value = usuario.nome || '';
+    if (inputEmail && !inputEmail.value) inputEmail.value = usuario.email || '';
+  }
+
   modal.classList.add('aberto');
   modal.setAttribute('aria-hidden', 'false');
   document.getElementById('agendamentoNome')?.focus();
@@ -345,6 +389,7 @@ async function confirmarAgendamento(event) {
 
 async function iniciarSite() {
   configurarMenu();
+  await configurarSessao();
   configurarModal();
   await carregarConfiguracao();
   renderizarBanner();

@@ -1,103 +1,110 @@
-const configFinal = localStorage.getItem("configBarbearia")
-  ? JSON.parse(localStorage.getItem("configBarbearia"))
-  : config;
+let configFinal = config;
 
-document.getElementById("nomeBarbearia").textContent = configFinal.nomeBanner;
-
-const formLogin = document.getElementById("formLogin");
-const formCadastro = document.getElementById("formCadastro");
-const mensagem = document.getElementById("mensagemLogin");
+const formLogin = document.getElementById('formLogin');
+const formCadastro = document.getElementById('formCadastro');
+const mensagem = document.getElementById('mensagemLogin');
 
 function mostrarMensagem(texto, erro = true) {
   mensagem.textContent = texto;
-  mensagem.classList.toggle("erro", erro);
-  mensagem.classList.toggle("sucesso", !erro);
+  mensagem.classList.toggle('erro', erro && Boolean(texto));
+  mensagem.classList.toggle('sucesso', !erro && Boolean(texto));
 }
 
-//ALTERNAR ENTRE LOGIN E CRIAR CONTA
+async function carregarNomeBarbearia() {
+  try {
+    configFinal = await BookBarberAPI.getConfig();
+  } catch {
+    configFinal = config;
+  }
+  document.getElementById('nomeBarbearia').textContent = configFinal.nomeBanner || 'BookBarber';
+}
 
-document.getElementById("irCadastro").addEventListener("click", function(e) {
+function destinoDepoisDoLogin(usuario) {
+  const redirect = new URLSearchParams(window.location.search).get('redirect');
+  if (redirect === 'admin.html' && usuario?.perfil === 'ADMIN') return 'admin.html';
+  return 'index.html';
+}
+
+// ALTERNAR ENTRE LOGIN E CRIAR CONTA
+
+document.getElementById('irCadastro').addEventListener('click', function (e) {
   e.preventDefault();
   formLogin.hidden = true;
   formCadastro.hidden = false;
-  mostrarMensagem("");
+  mostrarMensagem('');
 });
 
-document.getElementById("irLogin").addEventListener("click", function(e) {
+document.getElementById('irLogin').addEventListener('click', function (e) {
   e.preventDefault();
   formCadastro.hidden = true;
   formLogin.hidden = false;
-  mostrarMensagem("");
+  mostrarMensagem('');
 });
 
-//LOGIN
+// LOGIN
 
-formLogin.addEventListener("submit", async function(e) {
+formLogin.addEventListener('submit', async function (e) {
   e.preventDefault();
+  const botao = formLogin.querySelector('button[type="submit"]');
 
   const dados = {
-    email: document.getElementById("loginEmail").value.trim(),
-    senha: document.getElementById("loginSenha").value,
+    email: document.getElementById('loginEmail').value.trim(),
+    senha: document.getElementById('loginSenha').value,
   };
 
+  botao.disabled = true;
+  botao.textContent = 'Entrando...';
+  mostrarMensagem('');
+
   try {
-    // 👇 troca pelo endereço real do back-end
-    const resposta = await fetch("/api/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(dados),
-    });
-
-    if (!resposta.ok) {
-      mostrarMensagem("Email ou senha incorretos.");
-      return;
-    }
-
-    // se o back devolver um token, é aqui que você pega e guarda:
-    // const resultado = await resposta.json();
-
-    window.location.href = "index.html";
+    const resultado = await BookBarberAPI.login(dados);
+    mostrarMensagem('Login realizado com sucesso.', false);
+    window.location.href = destinoDepoisDoLogin(resultado.usuario);
   } catch (erro) {
-    mostrarMensagem("Não foi possível conectar. Tente novamente.");
+    mostrarMensagem(erro.message || 'Email ou senha incorretos.');
+  } finally {
+    botao.disabled = false;
+    botao.textContent = 'Entrar';
   }
 });
 
 // CRIAR CONTA
 
-formCadastro.addEventListener("submit", async function(e) {
+formCadastro.addEventListener('submit', async function (e) {
   e.preventDefault();
 
-  const senha = document.getElementById("cadSenha").value;
-  const confirmar = document.getElementById("cadConfirmar").value;
+  const senha = document.getElementById('cadSenha').value;
+  const confirmar = document.getElementById('cadConfirmar').value;
 
   if (senha !== confirmar) {
-    mostrarMensagem("As senhas não são iguais.");
+    mostrarMensagem('As senhas não são iguais.');
     return;
   }
 
   const dados = {
-    nome: document.getElementById("cadNome").value.trim(),
-    email: document.getElementById("cadEmail").value.trim(),
+    nome: document.getElementById('cadNome').value.trim(),
+    email: document.getElementById('cadEmail').value.trim(),
     senha,
   };
 
+  const botao = formCadastro.querySelector('button[type="submit"]');
+  botao.disabled = true;
+  botao.textContent = 'Criando conta...';
+  mostrarMensagem('');
+
   try {
-    // 👇 troca pelo endereço real do back-end
-    const resposta = await fetch("/api/cadastro", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(dados),
-    });
-
-    if (!resposta.ok) {
-      mostrarMensagem("Não foi possível criar a conta. Esse email já pode estar em uso.");
-      return;
-    }
-
+    await BookBarberAPI.cadastrar(dados);
+    formCadastro.reset();
     formCadastro.hidden = true;
     formLogin.hidden = false;
-    mostrarMensagem("Conta criada! Agora é só entrar.", false);
+    document.getElementById('loginEmail').value = dados.email;
+    mostrarMensagem('Conta criada! Agora é só entrar.', false);
   } catch (erro) {
-    mostrarMensagem("Não foi possível conectar. Tente novamente.");
+    mostrarMensagem(erro.message || 'Não foi possível criar a conta.');
+  } finally {
+    botao.disabled = false;
+    botao.textContent = 'Criar conta';
   }
 });
+
+carregarNomeBarbearia();

@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import { PrismaBetterSqlite3 } from '@prisma/adapter-better-sqlite3';
 import { PrismaClient } from '../generated/prisma/client';
+import { hashSenha } from '../src/auth/security';
 
 const adapter = new PrismaBetterSqlite3({ url: process.env.DATABASE_URL || 'file:./dev.db' });
 const prisma = new PrismaClient({ adapter });
@@ -62,7 +63,27 @@ async function main() {
     });
   }
 
+  const adminEmail = (process.env.ADMIN_EMAIL || 'admin@bookbarber.com').trim().toLowerCase();
+  const adminPassword = process.env.ADMIN_PASSWORD || 'admin123';
+  const adminSenhaHash = hashSenha(adminPassword);
+
+  await prisma.usuario.upsert({
+    where: { email: adminEmail },
+    create: {
+      nome: 'Administrador',
+      email: adminEmail,
+      senhaHash: adminSenhaHash,
+      perfil: 'ADMIN',
+    },
+    update: {
+      nome: 'Administrador',
+      senhaHash: adminSenhaHash,
+      perfil: 'ADMIN',
+    },
+  });
+
   console.log('Dados iniciais do BookBarber inseridos.');
+  console.log(`Administrador: ${adminEmail}`);
 }
 
 main().finally(async () => prisma.$disconnect());

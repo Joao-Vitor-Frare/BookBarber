@@ -193,3 +193,27 @@ body { max-width: 950px; }
   .editor-admin { grid-template-columns: 1fr; }
   .editor-admin h3, .acoes-editor-admin { grid-column: auto; }
 }
+
+.acoes-topo-admin {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+#adminUsuario {
+  color: #c7c7c7;
+}
+
+#btnSairAdmin {
+  background: #333;
+  color: white;
+  border: 1px solid #555;
+  border-radius: 5px;
+  padding: 8px 12px;
+}
+
+@media (max-width: 700px) {
+  .acoes-topo-admin { justify-content: flex-start; }
+}

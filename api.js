@@ -3,11 +3,39 @@ const BookBarberAPI = (() => {
     || localStorage.getItem('bookbarberApiUrl')
     || 'http://localhost:3000/api';
 
+  const TOKEN_KEY = 'bookbarberToken';
+  const USUARIO_KEY = 'bookbarberUsuario';
+
+  function getToken() {
+    return localStorage.getItem(TOKEN_KEY);
+  }
+
+  function getUsuario() {
+    try {
+      const valor = localStorage.getItem(USUARIO_KEY);
+      return valor ? JSON.parse(valor) : null;
+    } catch {
+      return null;
+    }
+  }
+
+  function salvarSessao(resultado) {
+    if (resultado?.accessToken) localStorage.setItem(TOKEN_KEY, resultado.accessToken);
+    if (resultado?.usuario) localStorage.setItem(USUARIO_KEY, JSON.stringify(resultado.usuario));
+  }
+
+  function logout() {
+    localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(USUARIO_KEY);
+  }
+
   async function request(path, options = {}) {
+    const token = getToken();
     const response = await fetch(`${baseUrl}${path}`, {
       ...options,
       headers: {
         'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
         ...(options.headers || {}),
       },
     });
@@ -19,18 +47,34 @@ const BookBarberAPI = (() => {
     }
 
     if (!response.ok) {
+      if (response.status === 401 && path !== '/login') logout();
       const message = Array.isArray(data?.message)
         ? data.message.join(', ')
         : data?.message || `Erro HTTP ${response.status}`;
-      throw new Error(message);
+      const erro = new Error(message);
+      erro.status = response.status;
+      throw erro;
     }
 
     return data;
   }
 
+  async function login(dados) {
+    const resultado = await request('/login', { method: 'POST', body: JSON.stringify(dados) });
+    salvarSessao(resultado);
+    return resultado;
+  }
+
   return {
     baseUrl,
     request,
+    login,
+    cadastrar: (dados) => request('/cadastro', { method: 'POST', body: JSON.stringify(dados) }),
+    me: () => request('/me'),
+    logout,
+    getToken,
+    getUsuario,
+    estaLogado: () => Boolean(getToken()),
     getConfig: () => request('/configuracao'),
     updateConfig: (dados) => request('/configuracao', { method: 'PATCH', body: JSON.stringify(dados) }),
     getProdutos: (incluirInativos = false) => request(`/produtos${incluirInativos ? '?incluirInativos=true' : ''}`),

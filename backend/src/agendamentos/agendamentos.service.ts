@@ -98,10 +98,11 @@ export class AgendamentosService {
       if (!barbeiroId) throw new ConflictException('Não há barbeiros disponíveis nesse horário');
     }
 
+    const email = dto.email.trim().toLowerCase();
     const cliente = await this.prisma.cliente.upsert({
-      where: { email: dto.email },
-      create: { nome: dto.nomeCliente, email: dto.email, telefone: dto.telefone },
-      update: { nome: dto.nomeCliente, telefone: dto.telefone },
+      where: { email },
+      create: { nome: dto.nomeCliente.trim(), email, telefone: dto.telefone.trim() },
+      update: { nome: dto.nomeCliente.trim(), telefone: dto.telefone.trim() },
     });
 
     return this.create({

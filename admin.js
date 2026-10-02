@@ -401,8 +401,26 @@ async function carregarAgendamentos() {
 document.getElementById('btnAtualizarAgendamentos').addEventListener('click', carregarAgendamentos);
 
 async function iniciarAdmin() {
+  try {
+    const usuario = await BookBarberAPI.me();
+    if (usuario.perfil !== 'ADMIN') {
+      window.location.href = 'index.html';
+      return;
+    }
+    const adminUsuario = document.getElementById('adminUsuario');
+    if (adminUsuario) adminUsuario.textContent = usuario.nome;
+  } catch {
+    window.location.href = 'login.html?redirect=admin.html';
+    return;
+  }
+
   await carregarConfig();
   await Promise.all([carregarBarbeiros(), carregarServicos(), carregarProdutos(), carregarAgendamentos()]);
 }
+
+document.getElementById('btnSairAdmin')?.addEventListener('click', () => {
+  BookBarberAPI.logout();
+  window.location.href = 'index.html';
+});
 
 document.addEventListener('DOMContentLoaded', iniciarAdmin);
