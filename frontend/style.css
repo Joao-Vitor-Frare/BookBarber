@@ -302,7 +302,7 @@ nav a{
     position: relative;
     left: 50%;
     transform: translateX(-50%);
-    font-size: 40px;
+    font-size: clamp(30px, 7vw, 40px);
 }
 
 #calendario{
