@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minhas reservas - BookBarber</title>
+    <link rel="stylesheet" href="paginas.css">
+    <script src="config.js" defer></script>
+    <script src="api.js" defer></script>
+    <script src="minhas-reservas.js" defer></script>
+</head>
+<body>
+    <header class="topo">
+        <a href="index.html" class="topo-nome">BookBarber</a>
+        <nav class="topo-links">
+            <a href="index.html#agenda">Agendar horário</a>
+        </nav>
+    </header>
+
+    <main class="pagina" hidden id="conteudo">
+        <h1>Minhas reservas</h1>
+        <p class="subtitulo" id="saudacao"></p>
+
+        <p id="mensagemReservas" class="mensagem-pagina"></p>
+
+        <section class="bloco">
+            <h2>Próximos horários</h2>
+            <div id="listaProximas" class="lista-reservas"></div>
+        </section>
+
+        <section class="bloco">
+            <h2>Histórico</h2>
+            <div id="listaHistorico" class="lista-reservas"></div>
+        </section>
+    </main>
+</body>
+</html>
