@@ -63,3 +63,12 @@ Content-Type: application/json
 {
   "status": "CANCELADO"
 }
+
+
+### Minhas reservas - CLIENTE ou ADMIN
+GET {{base}}/agendamentos/minhas
+Authorization: Bearer {{token}}
+
+### Dashboard de vendas do mês - ADMIN
+GET {{base}}/dashboard/vendas?mes=2026-10
+Authorization: Bearer {{token}}

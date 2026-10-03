@@ -34,6 +34,12 @@ export class AgendamentosController {
     return this.service.disponibilidade(data, barbeiroId ? Number(barbeiroId) : undefined);
   }
 
+  @Roles('CLIENTE', 'ADMIN')
+  @Get('minhas')
+  minhas(@Req() req: { user: { sub: number } }) {
+    return this.service.findMinhas(req.user.sub);
+  }
+
   @Get()
   findAll(
     @Query('data') data?: string,

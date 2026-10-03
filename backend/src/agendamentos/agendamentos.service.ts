@@ -130,6 +130,30 @@ export class AgendamentosService {
     });
   }
 
+  async findMinhas(usuarioId: number) {
+    const usuario = await this.prisma.usuario.findUnique({
+      where: { id: usuarioId },
+      select: { email: true },
+    });
+
+    if (!usuario) {
+      throw new BadRequestException('Usuário da sessão não foi encontrado');
+    }
+
+    const cliente = await this.prisma.cliente.findUnique({
+      where: { email: usuario.email.trim().toLowerCase() },
+      select: { id: true },
+    });
+
+    if (!cliente) return [];
+
+    return this.prisma.agendamento.findMany({
+      where: { clienteId: cliente.id },
+      include: this.include,
+      orderBy: { dataHora: 'desc' },
+    });
+  }
+
   findAll(filtros?: { data?: string; barbeiroId?: number; clienteId?: number; status?: string }) {
     return this.prisma.agendamento.findMany({
       where: {

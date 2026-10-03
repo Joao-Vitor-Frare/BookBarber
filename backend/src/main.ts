@@ -8,13 +8,30 @@ async function bootstrap() {
 
   app.setGlobalPrefix('api');
 
-  const origins = (process.env.FRONTEND_URL || '')
+  const originsPermitidas = (process.env.FRONTEND_URL || '')
     .split(',')
-    .map((origin) => origin.trim())
+    .map((origin) => origin.trim().replace(/\/$/, ''))
     .filter(Boolean);
 
   app.enableCors({
-    origin: origins.length > 0 ? origins : true,
+    origin: (origin, callback) => {
+      // Requisições sem Origin (Postman, acesso direto, health checks etc.).
+      if (!origin) return callback(null, true);
+
+      const origemNormalizada = origin.replace(/\/$/, '');
+      if (originsPermitidas.includes(origemNormalizada)) {
+        return callback(null, true);
+      }
+
+      // Também aceita previews do projeto frontend na Vercel.
+      if (/^https:\/\/bookbarber-frontend(?:-[a-z0-9-]+)?\.vercel\.app$/i.test(origemNormalizada)) {
+        return callback(null, true);
+      }
+
+      return callback(new Error('Origem não permitida pelo CORS'));
+    },
+    methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
   });
 
   app.useGlobalPipes(

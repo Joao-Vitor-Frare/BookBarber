@@ -8,6 +8,7 @@ import { AgendamentosModule } from './agendamentos/agendamentos.module';
 import { ProdutosModule } from './produtos/produtos.module';
 import { ConfiguracaoModule } from './configuracao/configuracao.module';
 import { AuthModule } from './auth/auth.module';
+import { DashboardModule } from './dashboard/dashboard.module';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { RolesGuard } from './auth/guards/roles.guard';
 
@@ -21,6 +22,7 @@ import { RolesGuard } from './auth/guards/roles.guard';
     AgendamentosModule,
     ProdutosModule,
     ConfiguracaoModule,
+    DashboardModule,
   ],
   providers: [
     { provide: APP_GUARD, useClass: JwtAuthGuard },

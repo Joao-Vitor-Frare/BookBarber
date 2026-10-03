@@ -36,6 +36,8 @@ http://localhost:3000/api
 - `POST /api/login`: recebe `email` e `senha` e devolve token + conta.
 - `GET /api/me`: devolve dados da conta autenticada.
 - `POST /api/agendamentos/reservar`: exige login e usa nome, telefone e e-mail da conta.
+- `GET /api/agendamentos/minhas`: devolve somente as reservas do cliente autenticado.
+- `GET /api/dashboard/vendas?mes=YYYY-MM`: resumo mensal de vendas, disponível apenas para `ADMIN`.
 - Rotas administrativas exigem perfil `ADMIN`.
 
 ## Deploy
