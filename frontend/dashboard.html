@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - BookBarber</title>
+    <link rel="stylesheet" href="paginas.css">
+    <script src="config.js" defer></script>
+    <script src="api.js" defer></script>
+    <script src="dashboard.js" defer></script>
+</head>
+<body>
+    <header class="topo">
+        <a href="index.html" class="topo-nome">BookBarber</a>
+        <nav class="topo-links">
+            <a href="index.html">Site</a>
+            <a href="admin.html">Configurações</a>
+        </nav>
+    </header>
+
+    <main class="pagina" hidden id="conteudo">
+        <h1>Dashboard</h1>
+        <p class="subtitulo">Resumo das vendas do mês.</p>
+
+        <div class="filtro-mes">
+            <label for="filtroMes">Mês</label>
+            <input type="month" id="filtroMes">
+        </div>
+
+        <p id="mensagemDashboard" class="mensagem-pagina"></p>
+
+        <section class="cards">
+            <div class="card">
+                <span>Total vendido</span>
+                <strong id="totalVendido">-</strong>
+            </div>
+            <div class="card">
+                <span>Atendimentos</span>
+                <strong id="totalAtendimentos">-</strong>
+            </div>
+            <div class="card">
+                <span>Ticket médio</span>
+                <strong id="ticketMedio">-</strong>
+            </div>
+            <div class="card">
+                <span>Ainda agendados</span>
+                <strong id="totalAgendados">-</strong>
+            </div>
+            <div class="card">
+                <span>Cancelamentos</span>
+                <strong id="totalCancelados">-</strong>
+            </div>
+        </section>
+
+        <section class="bloco">
+            <h2>Vendas por barbeiro</h2>
+            <div id="listaBarbeiros"></div>
+        </section>
+
+        <section class="bloco">
+            <h2>Serviços mais vendidos</h2>
+            <div id="listaServicos"></div>
+        </section>
+    </main>
+</body>
+</html>
