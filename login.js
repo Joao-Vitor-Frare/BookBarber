@@ -83,6 +83,7 @@ formCadastro.addEventListener('submit', async function (e) {
 
   const dados = {
     nome: document.getElementById('cadNome').value.trim(),
+    telefone: document.getElementById('cadTelefone').value.trim(),
     email: document.getElementById('cadEmail').value.trim(),
     senha,
   };
