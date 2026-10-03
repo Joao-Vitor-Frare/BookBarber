@@ -1,8 +1,19 @@
-backend/node_modules/
-backend/dist/
-backend/.env
-backend/dev.db
-backend/dev.db-journal
-backend/generated/
+# VS Code
 .vscode/
+
+# Node
+**/node_modules/
+**/dist/
+
+# Variáveis de ambiente
+**/.env
+**/.env.*
+!**/.env.example
+
+# Bancos locais antigos
+*.db
+*.db-journal
+
+# Sistema
 .DS_Store
+Thumbs.db

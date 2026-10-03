@@ -5,6 +5,10 @@ export class CadastroDto {
   @IsNotEmpty()
   nome: string;
 
+  @IsString()
+  @IsNotEmpty()
+  telefone: string;
+
   @IsEmail()
   email: string;
 

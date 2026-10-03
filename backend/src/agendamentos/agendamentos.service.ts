@@ -73,8 +73,14 @@ export class AgendamentosService {
     });
   }
 
-  async reservar(dto: ReservarAgendamentoDto) {
+  async reservar(usuarioId: number, dto: ReservarAgendamentoDto) {
     await this.validarHorarioConfigurado(dto.data, dto.hora);
+
+    const usuario = await this.prisma.usuario.findUnique({ where: { id: usuarioId } });
+    if (!usuario) throw new BadRequestException('Usuário da sessão não foi encontrado');
+    if (!usuario.nome.trim() || !usuario.email.trim() || !usuario.telefone.trim()) {
+      throw new BadRequestException('Complete nome, e-mail e telefone da conta antes de agendar');
+    }
 
     let servicoId = dto.servicoId;
     if (!servicoId) {
@@ -98,11 +104,20 @@ export class AgendamentosService {
       if (!barbeiroId) throw new ConflictException('Não há barbeiros disponíveis nesse horário');
     }
 
-    const email = dto.email.trim().toLowerCase();
+    if (!barbeiroId) throw new ConflictException('Não há barbeiros disponíveis nesse horário');
+
+    const email = usuario.email.trim().toLowerCase();
     const cliente = await this.prisma.cliente.upsert({
       where: { email },
-      create: { nome: dto.nomeCliente.trim(), email, telefone: dto.telefone.trim() },
-      update: { nome: dto.nomeCliente.trim(), telefone: dto.telefone.trim() },
+      create: {
+        nome: usuario.nome.trim(),
+        email,
+        telefone: usuario.telefone.trim(),
+      },
+      update: {
+        nome: usuario.nome.trim(),
+        telefone: usuario.telefone.trim(),
+      },
     });
 
     return this.create({

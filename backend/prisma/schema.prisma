@@ -5,13 +5,14 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
 }
 
 model Usuario {
   id           Int      @id @default(autoincrement())
   nome         String
   email        String   @unique
+  telefone     String   @default("")
   senhaHash    String
   perfil       String   @default("CLIENTE")
   criadoEm     DateTime @default(now())

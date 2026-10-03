@@ -277,6 +277,11 @@ async function mostrarHorariosDoDia(dataStr) {
 }
 
 function abrirModalAgendamento(dataStr, slot, dataObj) {
+  if (!BookBarberAPI.estaLogado()) {
+    window.location.href = 'login.html?redirect=index.html';
+    return;
+  }
+
   dataSelecionada = dataStr;
   horarioSelecionado = slot;
 
@@ -306,17 +311,9 @@ function abrirModalAgendamento(dataStr, slot, dataObj) {
     selectBarbeiro.appendChild(option);
   });
 
-  const usuario = BookBarberAPI.getUsuario();
-  if (usuario) {
-    const inputNome = document.getElementById('agendamentoNome');
-    const inputEmail = document.getElementById('agendamentoEmail');
-    if (inputNome && !inputNome.value) inputNome.value = usuario.nome || '';
-    if (inputEmail && !inputEmail.value) inputEmail.value = usuario.email || '';
-  }
-
   modal.classList.add('aberto');
   modal.setAttribute('aria-hidden', 'false');
-  document.getElementById('agendamentoNome')?.focus();
+  selectServico.focus();
 }
 
 function fecharModalAgendamento() {
@@ -357,9 +354,6 @@ async function confirmarAgendamento(event) {
   }
 
   const payload = {
-    nomeCliente: document.getElementById('agendamentoNome').value.trim(),
-    email: document.getElementById('agendamentoEmail').value.trim(),
-    telefone: document.getElementById('agendamentoTelefone').value.trim(),
     data: dataSelecionada,
     hora: horarioSelecionado.hora,
     servicoId,

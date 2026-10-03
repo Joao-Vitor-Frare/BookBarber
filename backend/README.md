@@ -1,10 +1,19 @@
 # BookBarber Backend
 
-Backend do MVP em **NestJS + Prisma + SQLite**.
+API do BookBarber em **NestJS + TypeScript + Prisma ORM 7 + PostgreSQL/Supabase**.
 
-## Primeira execução / atualização
+## Banco
 
-Na pasta `backend`:
+O backend usa PostgreSQL no Supabase.
+
+- `DATABASE_URL`: conexão pooled do Supabase para execução da aplicação.
+- `DIRECT_URL`: conexão usada pelo Prisma CLI para migrations.
+
+O SQLite e o adapter `better-sqlite3` foram removidos.
+
+## Primeira execução
+
+Na pasta `backend/`:
 
 ```bash
 cp .env.example .env
@@ -13,48 +22,24 @@ npm run setup
 npm run start:dev
 ```
 
-`npm run setup` gera o Prisma Client, sincroniza o banco SQLite com o schema e insere os dados iniciais sem duplicar os registros-base. O usuário administrador é criado/atualizado a partir de `ADMIN_EMAIL` e `ADMIN_PASSWORD`.
+Antes de `npm run setup`, preencha `DATABASE_URL` e `DIRECT_URL` no `.env`.
 
-API: `http://localhost:3000/api`
+API local:
+
+```text
+http://localhost:3000/api
+```
 
 ## Autenticação
 
-- `POST /api/cadastro` — cria usuário `CLIENTE`.
-- `POST /api/login` — valida e-mail/senha e devolve um token com validade de 8 horas.
-- `GET /api/me` — devolve o usuário da sessão.
-- Senhas são armazenadas com `scrypt` + salt.
-- Rotas administrativas exigem token e perfil `ADMIN`.
+- `POST /api/cadastro`: recebe `nome`, `telefone`, `email` e `senha` e cria usuário `CLIENTE`.
+- `POST /api/login`: recebe `email` e `senha` e devolve token + conta.
+- `GET /api/me`: devolve dados da conta autenticada.
+- `POST /api/agendamentos/reservar`: exige login e usa nome, telefone e e-mail da conta.
+- Rotas administrativas exigem perfil `ADMIN`.
 
-Exemplo de `.env`:
+## Deploy
 
-```env
-DATABASE_URL="file:./dev.db"
-PORT=3000
-JWT_SECRET="troque-esta-chave-em-producao"
-ADMIN_EMAIL="admin@bookbarber.com"
-ADMIN_PASSWORD="admin123"
-```
+Na Vercel, use `backend` como **Root Directory** e configure as variáveis do `.env.example` no painel do projeto.
 
-## Principais rotas públicas
-
-- `GET /api/barbeiros`
-- `GET /api/servicos`
-- `GET /api/produtos`
-- `GET /api/configuracao`
-- `POST /api/agendamentos/reservar`
-- `GET /api/agendamentos/disponibilidade?data=YYYY-MM-DD`
-
-## Administração
-
-Com token de `ADMIN`:
-
-- CRUD de clientes
-- CRUD de barbeiros
-- CRUD de serviços
-- CRUD de produtos
-- alteração da configuração
-- consulta/alteração/exclusão de agendamentos
-
-## Banco
-
-O banco local é `backend/dev.db` e está ignorado pelo Git. O projeto mantém o schema e migrations no repositório para documentar a estrutura do banco.
+O script `postinstall` executa `prisma generate`, permitindo que o Prisma Client seja gerado durante a instalação no deploy.

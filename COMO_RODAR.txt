@@ -1,40 +1,59 @@
 BOOKBARBER - COMO RODAR
 
-1) Abra o Git Bash/terminal na pasta raiz do BookBarber.
+ESTRUTURA:
+BookBarber/
+  backend/
+  frontend/
 
-2) Entre no backend:
+BANCO:
+O projeto usa PostgreSQL no Supabase. SQLite não é mais utilizado.
+
+1) Crie um projeto no Supabase.
+
+2) No Supabase, abra Connect e copie:
+   - Transaction Pooler -> DATABASE_URL
+   - Session Pooler ou Direct -> DIRECT_URL
+
+3) Abra o Git Bash na raiz BookBarber e entre no backend:
    cd backend
 
-3) Na primeira vez (ou após substituir pelo ZIP novo):
+4) Crie o arquivo de ambiente:
    cp .env.example .env
+
+5) Edite .env e informe DATABASE_URL, DIRECT_URL, JWT_SECRET e dados do admin.
+
+6) Instale:
    npm install
+
+7) Crie as tabelas e dados iniciais no Supabase:
    npm run setup
 
-4) Inicie o backend:
+8) Rode o backend:
    npm run start:dev
 
-5) Abra o frontend com o Live Server do VS Code a partir da pasta raiz do BookBarber.
-   O frontend usa por padrão: http://localhost:3000/api
+9) API local:
+   http://localhost:3000/api
 
-LOGIN:
-- Página: login.html
-- Contas cadastradas pelo site: perfil CLIENTE
-- Admin padrão do .env.example:
-  email: admin@bookbarber.com
-  senha: admin123
-- O painel admin.html exige login de ADMIN.
+10) Abra frontend/index.html com Live Server/Live Preview.
 
-O que já está integrado:
-- Cadastro/login com senha protegida e token
-- Proteção das rotas administrativas
-- Configuração da barbearia no banco
-- Horários reais/disponibilidade
-- Reserva de agendamentos
-- Cliente criado/atualizado automaticamente pelo e-mail
-- Escolha de serviço e barbeiro
-- Produtos vindos do banco
-- Admin de barbeiros, serviços, produtos e agendamentos
+LOGIN/CADASTRO:
+- Cadastro: nome + telefone + e-mail + senha.
+- Login: e-mail + senha.
+- Conta comum: CLIENTE.
+- Conta administrativa: ADMIN.
+
+AGENDAMENTO:
+- Exige login.
+- Nome, telefone e e-mail são buscados da conta pelo backend.
+- O modal envia apenas dados do horário/serviço/barbeiro.
+
+DEPLOY:
+- Projeto Vercel 1: Root Directory = backend
+- Projeto Vercel 2: Root Directory = frontend
+- No frontend publicado, configure a URL da API do backend.
+- No backend publicado, configure FRONTEND_URL com a URL do frontend.
 
 IMPORTANTE:
-- Antes de deploy/apresentação, altere JWT_SECRET e ADMIN_PASSWORD no backend/.env.
-- O arquivo backend/dev.db não deve ser enviado ao GitHub.
+- Não envie backend/.env para o GitHub.
+- Não envie senhas ou strings do Supabase para o GitHub.
+- .vscode é configuração local do VS Code e deve ficar ignorada.

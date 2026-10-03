@@ -1,27 +1,52 @@
 # Integração com o frontend
 
-A integração está aplicada nos arquivos da raiz do projeto.
+O frontend fica em `frontend/` e o backend em `backend/`.
 
-- `api.js`: cliente HTTP centralizado, armazenamento de sessão e envio do token nas rotas protegidas.
-- `login.js`: cadastro e login usando `/api/cadastro` e `/api/login`.
-- `script.js`: carrega configuração/produtos, consulta disponibilidade, envia reservas e preenche nome/e-mail do usuário conectado.
-- `admin.js`: valida o perfil `ADMIN` antes de carregar o painel e gerencia configurações, barbeiros, serviços, produtos e agendamentos.
-- `index.html`: possui entrada para login e exibe o atalho administrativo apenas para uma sessão de administrador válida.
+## Cadastro
 
-## Rotas públicas
+O frontend envia:
 
-- `POST /api/cadastro`
-- `POST /api/login`
-- `GET /api/configuracao`
-- `GET /api/produtos`
-- `GET /api/servicos`
-- `GET /api/barbeiros`
-- `GET /api/agendamentos/disponibilidade`
-- `POST /api/agendamentos/reservar`
+```json
+{
+  "nome": "Cliente",
+  "telefone": "49999999999",
+  "email": "cliente@teste.com",
+  "senha": "123456"
+}
+```
 
-## Rotas autenticadas
+O backend cria a conta `CLIENTE` e sincroniza nome, e-mail e telefone com a entidade `Cliente`.
 
-- `GET /api/me` — retorna o usuário da sessão.
-- Operações administrativas de escrita e gerenciamento exigem perfil `ADMIN`.
+## Reserva
 
-Para trocar a URL do backend no futuro, altere o valor padrão em `api.js` ou defina `window.BOOKBARBER_API_URL` antes de carregar o arquivo.
+O frontend envia somente os dados do agendamento:
+
+```json
+{
+  "data": "2026-10-10",
+  "hora": "14:00",
+  "servicoId": 1,
+  "barbeiroId": 1,
+  "observacoes": "Opcional"
+}
+```
+
+A rota exige `Authorization: Bearer <token>`. Nome, telefone e e-mail são obtidos da conta identificada pelo token.
+
+## Desenvolvimento local
+
+API:
+
+```text
+http://localhost:3000/api
+```
+
+## Produção
+
+Se frontend e backend forem projetos Vercel separados, o frontend deve usar a URL pública do backend, por exemplo:
+
+```text
+https://bookbarber-api.vercel.app/api
+```
+
+No backend, `FRONTEND_URL` deve receber a URL pública do frontend para o CORS.

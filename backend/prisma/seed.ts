@@ -1,9 +1,15 @@
 import 'dotenv/config';
-import { PrismaBetterSqlite3 } from '@prisma/adapter-better-sqlite3';
+import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '../generated/prisma/client';
 import { hashSenha } from '../src/auth/security';
 
-const adapter = new PrismaBetterSqlite3({ url: process.env.DATABASE_URL || 'file:./dev.db' });
+const connectionString = process.env.DATABASE_URL || process.env.DIRECT_URL;
+
+if (!connectionString) {
+  throw new Error('Configure DATABASE_URL ou DIRECT_URL antes de executar o seed.');
+}
+
+const adapter = new PrismaPg({ connectionString });
 const prisma = new PrismaClient({ adapter });
 
 const horariosSemana = {
@@ -65,25 +71,34 @@ async function main() {
 
   const adminEmail = (process.env.ADMIN_EMAIL || 'admin@bookbarber.com').trim().toLowerCase();
   const adminPassword = process.env.ADMIN_PASSWORD || 'admin123';
+  const adminNome = process.env.ADMIN_NOME || 'Administrador';
+  const adminTelefone = process.env.ADMIN_TELEFONE || '(00) 00000-0000';
   const adminSenhaHash = hashSenha(adminPassword);
 
   await prisma.usuario.upsert({
     where: { email: adminEmail },
     create: {
-      nome: 'Administrador',
+      nome: adminNome,
       email: adminEmail,
+      telefone: adminTelefone,
       senhaHash: adminSenhaHash,
       perfil: 'ADMIN',
     },
     update: {
-      nome: 'Administrador',
+      nome: adminNome,
+      telefone: adminTelefone,
       senhaHash: adminSenhaHash,
       perfil: 'ADMIN',
     },
   });
 
-  console.log('Dados iniciais do BookBarber inseridos.');
+  console.log('Dados iniciais do BookBarber inseridos no PostgreSQL.');
   console.log(`Administrador: ${adminEmail}`);
 }
 
-main().finally(async () => prisma.$disconnect());
+main()
+  .catch((erro) => {
+    console.error(erro);
+    process.exitCode = 1;
+  })
+  .finally(async () => prisma.$disconnect());

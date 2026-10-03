@@ -12,27 +12,42 @@ export class AuthService {
     return email.trim().toLowerCase();
   }
 
-  private usuarioPublico(usuario: { id: number; nome: string; email: string; perfil: string }) {
+  private usuarioPublico(usuario: { id: number; nome: string; email: string; telefone: string; perfil: string }) {
     return {
       id: usuario.id,
       nome: usuario.nome,
       email: usuario.email,
+      telefone: usuario.telefone,
       perfil: usuario.perfil,
     };
   }
 
   async cadastrar(dto: CadastroDto) {
     const email = this.normalizarEmail(dto.email);
+    const nome = dto.nome.trim();
+    const telefone = dto.telefone.trim();
+
     const existente = await this.prisma.usuario.findUnique({ where: { email } });
     if (existente) throw new ConflictException('Este e-mail já está cadastrado');
 
-    const usuario = await this.prisma.usuario.create({
-      data: {
-        nome: dto.nome.trim(),
-        email,
-        senhaHash: hashSenha(dto.senha),
-        perfil: 'CLIENTE',
-      },
+    const usuario = await this.prisma.$transaction(async (tx) => {
+      const novoUsuario = await tx.usuario.create({
+        data: {
+          nome,
+          telefone,
+          email,
+          senhaHash: hashSenha(dto.senha),
+          perfil: 'CLIENTE',
+        },
+      });
+
+      await tx.cliente.upsert({
+        where: { email },
+        create: { nome, email, telefone },
+        update: { nome, telefone },
+      });
+
+      return novoUsuario;
     });
 
     return this.usuarioPublico(usuario);
