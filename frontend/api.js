@@ -1,6 +1,5 @@
 const BookBarberAPI = (() => {
-  const baseUrl = window.BOOKBARBER_API_URL
-    || 'https://book-barber-cyan.vercel.app/api';
+  const baseUrl = 'https://book-barber-cyan.vercel.app/api';
 
   const TOKEN_KEY = 'bookbarberToken';
   const USUARIO_KEY = 'bookbarberUsuario';
