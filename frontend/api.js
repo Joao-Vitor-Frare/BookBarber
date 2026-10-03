@@ -1,7 +1,7 @@
 const BookBarberAPI = (() => {
   const baseUrl = window.BOOKBARBER_API_URL
     || localStorage.getItem('bookbarberApiUrl')
-    || 'http://localhost:3000/api';
+    || 'https://book-barber-22lnatqoz-joaovitorrecalcatifrare-7609.vercel.app/';
 
   const TOKEN_KEY = 'bookbarberToken';
   const USUARIO_KEY = 'bookbarberUsuario';
