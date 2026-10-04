@@ -16,11 +16,16 @@ export class RolesGuard implements CanActivate {
 
     const request = context.switchToHttp().getRequest();
     const url = String(request.originalUrl || request.url || '');
+    const handlerName = context.getHandler()?.name;
 
     // Estas rotas trabalham sempre com o usuário autenticado do JWT.
     // O JwtAuthGuard global continua exigindo login antes deste guard rodar,
     // então não há exposição de reservas de terceiros.
+    // Checamos tanto o handler resolvido pelo Nest quanto a URL para evitar
+    // diferenças de path em ambiente serverless/proxy (Vercel).
     if (
+      handlerName === 'minhas' ||
+      handlerName === 'reservar' ||
       url.startsWith('/api/agendamentos/minhas') ||
       url.startsWith('/agendamentos/minhas') ||
       url.startsWith('/api/agendamentos/reservar') ||
