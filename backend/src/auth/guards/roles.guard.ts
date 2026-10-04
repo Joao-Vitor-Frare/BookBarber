@@ -14,13 +14,27 @@ export class RolesGuard implements CanActivate {
     ]);
     if (publico) return true;
 
+    const request = context.switchToHttp().getRequest();
+    const url = String(request.originalUrl || request.url || '');
+
+    // Estas rotas trabalham sempre com o usuário autenticado do JWT.
+    // O JwtAuthGuard global continua exigindo login antes deste guard rodar,
+    // então não há exposição de reservas de terceiros.
+    if (
+      url.startsWith('/api/agendamentos/minhas') ||
+      url.startsWith('/agendamentos/minhas') ||
+      url.startsWith('/api/agendamentos/reservar') ||
+      url.startsWith('/agendamentos/reservar')
+    ) {
+      return true;
+    }
+
     const roles = this.reflector.getAllAndOverride<string[]>(ROLES_KEY, [
       context.getHandler(),
       context.getClass(),
     ]);
     if (!roles?.length) return true;
 
-    const request = context.switchToHttp().getRequest();
     const perfilUsuario = String(request.user?.perfil || '').trim().toUpperCase();
     const rolesPermitidas = roles.map((role) => String(role).trim().toUpperCase());
 
