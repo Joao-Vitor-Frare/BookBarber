@@ -22,14 +22,13 @@ import { ReservarAgendamentoDto } from './dto/reservar-agendamento.dto';
 export class AgendamentosController {
   constructor(private readonly service: AgendamentosService) {}
 
-  // Criação manual de agendamento pelo painel administrativo.
   @Roles('ADMIN')
   @Post()
   create(@Body() dto: CreateAgendamentoDto) {
     return this.service.create(dto);
   }
 
-  // Usuário autenticado pode reservar para a própria conta.
+  // Usuário autenticado reserva para a própria conta.
   @Post('reservar')
   reservar(
     @Req() req: { user: { sub: number } },
@@ -38,7 +37,6 @@ export class AgendamentosController {
     return this.service.reservar(req.user.sub, dto);
   }
 
-  // Disponibilidade pública.
   @Public()
   @Get('disponibilidade')
   disponibilidade(
@@ -51,13 +49,13 @@ export class AgendamentosController {
     );
   }
 
-  // Usuário autenticado consulta somente as próprias reservas.
-  @Get('minhas')
+  // Duas partes no caminho para nunca colidir com /agendamentos/:id.
+  // O JwtAuthGuard global continua exigindo login.
+  @Get('cliente/minhas')
   minhas(@Req() req: { user: { sub: number } }) {
     return this.service.findMinhas(req.user.sub);
   }
 
-  // Listagem completa somente para administrador.
   @Roles('ADMIN')
   @Get()
   findAll(
@@ -74,14 +72,12 @@ export class AgendamentosController {
     });
   }
 
-  // Prefixo "detalhes" evita conflito com GET /agendamentos/minhas.
   @Roles('ADMIN')
   @Get('detalhes/:id')
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.service.findOne(id);
   }
 
-  // Alteração de agendamento somente para administrador.
   @Roles('ADMIN')
   @Patch(':id')
   update(
@@ -91,7 +87,6 @@ export class AgendamentosController {
     return this.service.update(id, dto);
   }
 
-  // Exclusão de agendamento somente para administrador.
   @Roles('ADMIN')
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number) {

@@ -213,7 +213,7 @@ const BookBarberAPI = (() => {
  
     // Reservas do cliente logado (precisa da rota GET /agendamentos/minhas no back-end)
     getMinhasReservas: () =>
-      request('/agendamentos/minhas'),
+      request('/agendamentos/cliente/minhas'),
  
     atualizarAgendamento: (id, dados) =>
       request(`/agendamentos/${id}`, {
