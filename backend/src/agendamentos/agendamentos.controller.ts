@@ -1,4 +1,16 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Query, Req } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Post,
+  Query,
+  Req,
+} from '@nestjs/common';
+
 import { Public } from '../auth/decorators/public.decorator';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { AgendamentosService } from './agendamentos.service';
@@ -17,8 +29,7 @@ export class AgendamentosController {
     return this.service.create(dto);
   }
 
-  // Qualquer usuário autenticado pode reservar para a própria conta.
-  // O cliente é identificado pelo token; o frontend não envia clienteId.
+  // Usuário autenticado pode reservar para a própria conta.
   @Post('reservar')
   reservar(
     @Req() req: { user: { sub: number } },
@@ -27,25 +38,26 @@ export class AgendamentosController {
     return this.service.reservar(req.user.sub, dto);
   }
 
-  // Disponibilidade é pública para permitir a visualização da agenda antes do login.
+  // Disponibilidade pública.
   @Public()
   @Get('disponibilidade')
   disponibilidade(
     @Query('data') data: string,
     @Query('barbeiroId') barbeiroId?: string,
   ) {
-    return this.service.disponibilidade(data, barbeiroId ? Number(barbeiroId) : undefined);
+    return this.service.disponibilidade(
+      data,
+      barbeiroId ? Number(barbeiroId) : undefined,
+    );
   }
 
-  // Qualquer usuário autenticado pode consultar somente as próprias reservas.
-  // A consulta usa o e-mail da conta presente no token/sessão, então um cliente
-  // não consegue informar outro clienteId para visualizar reservas de terceiros.
+  // Usuário autenticado consulta somente as próprias reservas.
   @Get('minhas')
   minhas(@Req() req: { user: { sub: number } }) {
     return this.service.findMinhas(req.user.sub);
   }
 
-  // A listagem completa é administrativa.
+  // Listagem completa somente para administrador.
   @Roles('ADMIN')
   @Get()
   findAll(
@@ -62,19 +74,24 @@ export class AgendamentosController {
     });
   }
 
-  // Usa um prefixo estático para não colidir com GET /agendamentos/minhas.
+  // Prefixo "detalhes" evita conflito com GET /agendamentos/minhas.
   @Roles('ADMIN')
   @Get('detalhes/:id')
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.service.findOne(id);
   }
 
+  // Alteração de agendamento somente para administrador.
   @Roles('ADMIN')
   @Patch(':id')
-  update(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateAgendamentoDto) {
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: UpdateAgendamentoDto,
+  ) {
     return this.service.update(id, dto);
   }
 
+  // Exclusão de agendamento somente para administrador.
   @Roles('ADMIN')
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number) {
