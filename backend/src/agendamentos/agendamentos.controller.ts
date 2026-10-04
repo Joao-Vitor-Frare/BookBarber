@@ -62,8 +62,9 @@ export class AgendamentosController {
     });
   }
 
+  // Usa um prefixo estático para não colidir com GET /agendamentos/minhas.
   @Roles('ADMIN')
-  @Get(':id')
+  @Get('detalhes/:id')
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.service.findOne(id);
   }
