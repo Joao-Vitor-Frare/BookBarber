@@ -6,6 +6,14 @@
 
 O sistema foi criado para digitalizar tarefas comuns de uma barbearia, permitindo que clientes consultem serviços e horários, criem suas próprias reservas e acompanhem seus agendamentos, enquanto administradores gerenciam o funcionamento da barbearia em uma interface separada.
 
+# Link do site e usuários
+https://bookbarber-frontend.vercel.app/
+**Usuário ADMIN** = admin@bookbarber.com 
+**Senha** = admin123
+
+**Usuário CLIENTE** = cliente@gmail.com
+**Senha** = cliente123
+
 ## Principais funcionalidades
 
 ### Área do cliente
