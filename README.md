@@ -2,6 +2,9 @@
 
 **BookBarber** é um sistema web de gerenciamento de barbearia desenvolvido para a disciplina de **Programação IV**. O projeto reúne uma área pública para clientes, autenticação, reservas online, painel administrativo e dashboard de vendas.
 
+## Link Vídeo no YouTube
+https://youtu.be/FAt51JFKJW4
+
 ## Objetivo
 
 O sistema foi criado para digitalizar tarefas comuns de uma barbearia, permitindo que clientes consultem serviços e horários, criem suas próprias reservas e acompanhem seus agendamentos, enquanto administradores gerenciam o funcionamento da barbearia em uma interface separada.
