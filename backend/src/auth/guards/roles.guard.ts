@@ -21,9 +21,13 @@ export class RolesGuard implements CanActivate {
     if (!roles?.length) return true;
 
     const request = context.switchToHttp().getRequest();
-    if (!request.user || !roles.includes(request.user.perfil)) {
+    const perfilUsuario = String(request.user?.perfil || '').trim().toUpperCase();
+    const rolesPermitidas = roles.map((role) => String(role).trim().toUpperCase());
+
+    if (!request.user || !rolesPermitidas.includes(perfilUsuario)) {
       throw new ForbiddenException('Você não tem permissão para acessar esta área');
     }
+
     return true;
   }
 }
