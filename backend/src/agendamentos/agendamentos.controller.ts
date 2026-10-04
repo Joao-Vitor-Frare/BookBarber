@@ -15,7 +15,6 @@ import {
 import { Public } from '../auth/decorators/public.decorator';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { verificarToken } from '../auth/security';
-
 import { AgendamentosService } from './agendamentos.service';
 import { CreateAgendamentoDto } from './dto/create-agendamento.dto';
 import { UpdateAgendamentoDto } from './dto/update-agendamento.dto';
@@ -54,16 +53,13 @@ export class AgendamentosController {
     );
   }
 
-  // Minhas reservas.
-  //
-  // @Public faz os guards globais não bloquearem a rota por role.
-  // Porém a rota continua exigindo autenticação:
-  // o token é validado manualmente aqui.
+  // Reservas do usuário autenticado.
+  // Esta rota ignora os guards globais e valida o token aqui mesmo,
+  // evitando o bloqueio indevido de perfil.
   @Public()
   @Get('minhas')
   minhas(@Req() req: { headers: { authorization?: string } }) {
     const authorization = req.headers.authorization;
-
     const [tipo, token] = authorization?.split(' ') ?? [];
 
     if (tipo !== 'Bearer' || !token) {
@@ -74,7 +70,6 @@ export class AgendamentosController {
 
     try {
       const usuario = verificarToken(token);
-
       return this.service.findMinhas(usuario.sub);
     } catch {
       throw new UnauthorizedException(
@@ -83,8 +78,7 @@ export class AgendamentosController {
     }
   }
 
-  // Lista todos os agendamentos.
-  // Somente administrador.
+  // Lista todos os agendamentos. Somente administrador.
   @Roles('ADMIN')
   @Get()
   findAll(
@@ -95,27 +89,19 @@ export class AgendamentosController {
   ) {
     return this.service.findAll({
       data,
-      barbeiroId: barbeiroId
-        ? Number(barbeiroId)
-        : undefined,
-      clienteId: clienteId
-        ? Number(clienteId)
-        : undefined,
+      barbeiroId: barbeiroId ? Number(barbeiroId) : undefined,
+      clienteId: clienteId ? Number(clienteId) : undefined,
       status,
     });
   }
 
-  // Detalhes de um agendamento.
-  // Prefixo evita conflito com /minhas.
+  // Detalhes de um agendamento. Prefixo evita conflito com /minhas.
   @Roles('ADMIN')
   @Get('detalhes/:id')
-  findOne(
-    @Param('id', ParseIntPipe) id: number,
-  ) {
+  findOne(@Param('id', ParseIntPipe) id: number) {
     return this.service.findOne(id);
   }
 
-  // Atualização administrativa.
   @Roles('ADMIN')
   @Patch(':id')
   update(
@@ -125,12 +111,9 @@ export class AgendamentosController {
     return this.service.update(id, dto);
   }
 
-  // Exclusão administrativa.
   @Roles('ADMIN')
   @Delete(':id')
-  remove(
-    @Param('id', ParseIntPipe) id: number,
-  ) {
+  remove(@Param('id', ParseIntPipe) id: number) {
     return this.service.remove(id);
   }
 }

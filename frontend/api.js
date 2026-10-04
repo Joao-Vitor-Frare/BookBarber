@@ -92,9 +92,7 @@ const BookBarberAPI = (() => {
 
   return {
     baseUrl,
-
     request,
-
     login,
 
     cadastrar: (dados) =>
@@ -107,9 +105,7 @@ const BookBarberAPI = (() => {
       request('/me'),
 
     logout,
-
     getToken,
-
     getUsuario,
 
     estaLogado: () =>
@@ -211,7 +207,6 @@ const BookBarberAPI = (() => {
     getAgendamentos: () =>
       request('/agendamentos'),
 
-    // Reservas do cliente logado
     getMinhasReservas: () =>
       request('/agendamentos/minhas'),
 

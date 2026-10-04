@@ -14,17 +14,25 @@ async function bootstrap() {
     .filter(Boolean);
 
   app.enableCors({
-    origin: (origin, callback) => {
+    origin: (
+      origin: string | undefined,
+      callback: (error: Error | null, allow?: boolean) => void,
+    ) => {
       // Requisições sem Origin (Postman, acesso direto, health checks etc.).
       if (!origin) return callback(null, true);
 
       const origemNormalizada = origin.replace(/\/$/, '');
+
       if (originsPermitidas.includes(origemNormalizada)) {
         return callback(null, true);
       }
 
       // Também aceita previews do projeto frontend na Vercel.
-      if (/^https:\/\/bookbarber-frontend(?:-[a-z0-9-]+)?\.vercel\.app$/i.test(origemNormalizada)) {
+      if (
+        /^https:\/\/bookbarber-frontend(?:-[a-z0-9-]+)?\.vercel\.app$/i.test(
+          origemNormalizada,
+        )
+      ) {
         return callback(null, true);
       }
 
@@ -44,6 +52,8 @@ async function bootstrap() {
 
   const port = process.env.PORT ?? 3000;
   await app.listen(port);
+
   console.log(`BookBarber API rodando em http://localhost:${port}/api`);
 }
+
 bootstrap();
