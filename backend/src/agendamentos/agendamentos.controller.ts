@@ -19,7 +19,6 @@ export class AgendamentosController {
 
   // Qualquer usuário autenticado pode reservar para a própria conta.
   // O cliente é identificado pelo token; o frontend não envia clienteId.
-  @Roles('CLIENTE', 'ADMIN')
   @Post('reservar')
   reservar(
     @Req() req: { user: { sub: number } },
@@ -41,7 +40,6 @@ export class AgendamentosController {
   // Qualquer usuário autenticado pode consultar somente as próprias reservas.
   // A consulta usa o e-mail da conta presente no token/sessão, então um cliente
   // não consegue informar outro clienteId para visualizar reservas de terceiros.
-  @Roles('CLIENTE', 'ADMIN')
   @Get('minhas')
   minhas(@Req() req: { user: { sub: number } }) {
     return this.service.findMinhas(req.user.sub);
